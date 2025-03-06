@@ -1,0 +1,368 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<style>
+    .page-banner {
+        background: linear-gradient(rgba(30, 60, 114, 0.8), rgba(42, 82, 152, 0.8)), url("../static/assets/images/newspapers.jpg") center/cover;
+        padding: 80px 0;
+        text-align: center;
+    }
+
+    .page-banner-entry h1 {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #fff;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        animation: fadeIn 1s ease-in-out;
+    }
+
+    .profile-bx {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        animation: fadeIn 0.8s ease-in-out;
+    }
+
+    .user-profile-thumb img {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        border: 3px solid #fff;
+        transition: transform 0.3s ease;
+    }
+
+    .user-profile-thumb img:hover {
+        transform: scale(1.1);
+    }
+
+    .profile-tabnav ul {
+        padding: 0;
+        list-style: none;
+    }
+
+    .profile-tabnav .nav-link {
+		color: #007BFF;
+		font-weight:  bold;
+		background: #343A40; /* Тёмно-серый */
+		margin-bottom: 10px;
+		border-radius: 8px;
+		transition: all 0.3s ease-in-out;
+	}
+	
+	.profile-tabnav .nav-link:hover,
+	.profile-tabnav .nav-link.active {
+		background: #007BFF; /* Синий */
+		transform: scale(1.05);
+		color: #ffffff;
+	}
+
+    .courses-filter .cours-bx {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease-in-out;
+    }
+
+    .courses-filter .cours-bx:hover {
+        transform: translateY(-5px);
+    }
+
+    .form-control {
+        background: #fff;
+    	border: 1px solid #007BFF; 
+		color: #007BFF;
+		padding: 12px 15px; /* Увеличиваем отступы */
+		border-radius: 8px;
+		transition: 0.3s;
+		font-size: 16px;
+    }
+
+    .form-control:focus {
+		background: rgba(255, 255, 255, 0.3);
+		border: 1px solid #007BFF; /* Изменяем цвет рамки при фокусе */
+		outline: none;
+		box-shadow: 0 0 8px rgba(0, 123, 255, 0.5); /* Добавляем тень при фокусе */
+    }
+
+.btn {
+    background: #007BFF; /* Синий */
+    border: none;
+    padding: 12px;
+    font-size: 18px;
+    font-weight: bold;
+    transition: transform 0.3s ease, background 0.3s ease;
+}
+
+.btn:hover {
+    background: #343A40; /* Тёмно-серый */
+    transform: scale(1.05);
+}
+
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+
+<!-- Content -->
+<div class="page-content bg-white">
+    <!-- inner page banner -->
+    <div class="page-banner">
+        <div class="container">
+            <div class="page-banner-entry">
+                <h1>Profilim</h1>
+            </div>
+        </div>
+    </div>
+
+    <!-- Breadcrumb row -->
+    <div class="breadcrumb-row">
+        <div class="container">
+            <ul class="list-inline">
+                <li><a href="{% url 'index' %}">Baş sahypa</a></li>
+                <li>Profilim</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Profile Section -->
+    <div class="content-block">
+        <div class="section-area section-sp1">
+            <div class="container">
+                <div class="row">
+                    <!-- Sidebar -->
+                    <div class="col-lg-3 col-md-4 col-sm-12 m-b30">
+                        <div class="profile-bx text-center">
+                            <div class="user-profile-thumb">
+                                <img src="assets/images/profile/pic1.jpg" alt="Profil suraty" />
+                            </div>
+                            <div class="profile-info">
+                                <h4>{{ request.user.first_name }} {{ request.user.last_name }}</h4>
+                            </div>
+                            <div class="profile-tabnav">
+                                <ul class="nav nav-tabs">
+                                    <li class="nav-item">
+                                        <a class="nav-link active" data-toggle="tab" href="#courses">Makalalarym</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" data-toggle="tab" href="#add_article">Makala goşmak</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" data-toggle="tab" href="#edit-profile">Profile sazla</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" data-toggle="tab" href="#change-password">Açar sözi üýtget</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Profile Content -->
+                    <div class="col-lg-9 col-md-8 col-sm-12 m-b30">
+                        <div class="profile-content-bx">
+                            <div class="tab-content">
+                                <div class="tab-pane active" id="courses">
+                                    <div class="profile-head">
+                                        <h3>Makalalarym</h3>
+                                    </div>
+                                    <!-- Внутри секции <div class="tab-pane active" id="courses"> -->
+<div class="courses-filter">
+    <ul class="ttr-gallery-listing magnific-image row">
+        {% for article in page_obj %}
+        <li class="action-card col-xl-4 col-lg-6 col-md-12 col-sm-6 publish">
+            <div class="cours-bx">
+                <div class="action-box" style="min-height: 200px;">
+                    <img src="{{ article.img.url }}" alt="" style="min-height: 200px;">
+                    <a href="{% url 'article_detail' article.id %}" class="btn">Открыть</a>
+                </div>
+                <div class="info-bx text-center" style="min-height: 100px;">
+                    <h6><a href="{% url 'article_detail' article.id %}">{{ article.title|slice:40 }}...</a></h6>
+                    <span>{{ article.category }}</span>
+                </div>
+            </div>
+        </li>
+        {% empty %}
+        <h3>Вы пока не загрузили статьи</h3>
+        {% endfor %}
+    </ul>
+
+    <!-- Элементы управления пагинацией -->
+    <div class="pagination-bx rounded-sm gray clearfix">
+        <ul class="pagination">
+            {% if page_obj.has_previous %}
+                <li class="previous"><a href="?page=1"><i class="ti-arrow-left"></i> Ilkinji</a></li>
+                <li class="previous"><a href="?page={{ page_obj.previous_page_number }}">Öňki</a></li>
+            {% else %}
+                <li class="previous disabled"><a href="#"><i class="ti-arrow-left"></i> Ilkinji</a></li>
+                <li class="previous disabled"><a href="#">Öňki</a></li>
+            {% endif %}
+
+            <li class="active"><a href="#">{{ page_obj.number }}</a></li>
+
+            {% if page_obj.has_next %}
+                <li class="next"><a href="?page={{ page_obj.next_page_number }}">Indiki <i class="ti-arrow-right"></i></a></li>
+                <li class="next"><a href="?page={{ page_obj.paginator.num_pages }}">Iň soňky</a></li>
+            {% else %}
+                <li class="next disabled"><a href="#">Indiki <i class="ti-arrow-right"></i></a></li>
+                <li class="next disabled"><a href="#">Iň soňky</a></li>
+            {% endif %}
+        </ul>
+    </div>
+</div>
+
+                                </div>
+								
+								<div class="tab-pane" id="add_article">
+									<div class="profile-head">
+										<h3>Makala goşmak</h3>
+									</div>
+									<form class="edit-profile" action="{% url 'add_article' %}" method="post"
+										enctype="multipart/form-data">
+										{% csrf_token %}
+										<div class="">
+											<div class="form-group row">
+												<div class="col-12 col-sm-9 col-md-9 col-lg-10 ml-auto">
+													<h3>1. Makala maglumatlary</h3>
+												</div>
+											</div>
+											{% for field in form %}
+											<div class="form-group row">
+												<label class="col-12 col-sm-3 col-md-3 col-lg-2 col-form-label"
+													for="title">{{field.label}}</label>
+												{{field}}
+											</div>
+											{% endfor %}
+										</div>
+										<div class="">
+											<div class="">
+												<div class="row">
+													<div class="col-12 col-sm-3 col-md-3 col-lg-2">
+													</div>
+													<div class="col-12 col-sm-9 col-md-9 col-lg-7">
+														<button type="submit" class="btn">Ýatda
+															sakla</button>
+													</div>
+												</div>
+											</div>
+										</div>
+									</form>
+								</div>
+
+								<div class="tab-pane" id="edit-profile">
+									<div class="profile-head">
+										<h3>Profili sazla</h3>
+									</div>
+									<form class="edit-profile" action="{% url 'change_personal_info' %}" method="post">
+										{% csrf_token %}
+										<div class="">
+											<div class="form-group row">
+												<div class="col-12 col-sm-9 col-md-9 col-lg-10 ml-auto">
+													<h3>1. Şahsy Maglumatlar</h3>
+												</div>
+											</div>
+											<div class="form-group row">
+												<label class="col-12 col-sm-3 col-md-3 col-lg-2 col-form-label"
+													for="username">Username</label>
+												<div class="col-12 col-sm-9 col-md-9 col-lg-7">
+													<input class="form-control" type="text" id="username"
+														name="username" value="{{request.user.username}}">
+												</div>
+											</div>
+											<div class="form-group row">
+												<label
+													class="col-12 col-sm-3 col-md-3 col-lg-2 col-form-label">Adyňyz</label>
+												<div class="col-12 col-sm-9 col-md-9 col-lg-7">
+													<input class="form-control" type="text" name="first_name"
+														value="{{request.user.first_name}}">
+												</div>
+											</div>
+											<div class=" form-group row">
+												<label
+													class="col-12 col-sm-3 col-md-3 col-lg-2 col-form-label">Familiýaňyz</label>
+												<div class="col-12 col-sm-9 col-md-9 col-lg-7">
+													<input class="form-control" type="text" name="last_name"
+														value="{{request.user.last_name}}">
+												</div>
+											</div>
+											<div class="form-group row">
+												<label class="col-12 col-sm-3 col-md-3 col-lg-2 col-form-label">Profil
+													suraty</label>
+												<div class="col-12 col-sm-9 col-md-9 col-lg-7">
+													<input class="form-control" type="file">
+												</div>
+											</div>
+										</div>
+										<div class="">
+											<div class="">
+												<div class="row">
+													<div class="col-12 col-sm-3 col-md-3 col-lg-2">
+													</div>
+													<div class="col-12 col-sm-9 col-md-9 col-lg-7">
+														<button type="submit" class="btn">Ýatda
+															sakla</button>
+													</div>
+												</div>
+											</div>
+										</div>
+									</form>
+								</div>
+								<div class="tab-pane" id="change-password">
+									<div class="profile-head">
+										<h3>Açar sözi üýtgetmek</h3>
+									</div>
+									<form class="edit-profile" action="{% url 'change_password' %}" method="post">
+										{% csrf_token %}
+										<div class="">
+											<div class="form-group row">
+												<label class="col-12 col-sm-4 col-md-4 col-lg-3 col-form-label">Häzirki
+													açar söz</label>
+												<div class="col-12 col-sm-8 col-md-8 col-lg-7">
+													<input class="form-control" name="old_password" type="password">
+												</div>
+											</div>
+											<div class="form-group row">
+												<label class="col-12 col-sm-4 col-md-4 col-lg-3 col-form-label">Täze
+													açar söz</label>
+												<div class="col-12 col-sm-8 col-md-8 col-lg-7">
+													<input class="form-control" name="new_password" type="password">
+												</div>
+											</div>
+											<div class="form-group row">
+												<label class="col-12 col-sm-4 col-md-4 col-lg-3 col-form-label">Açar
+													sözi gaýtala</label>
+												<div class="col-12 col-sm-8 col-md-8 col-lg-7">
+													<input class="form-control" name="confirm_password" type="password">
+												</div>
+											</div>
+										</div>
+										<div class="row">
+											<div class="col-12 col-sm-4 col-md-4 col-lg-3">
+											</div>
+											<div class="col-12 col-sm-8 col-md-8 col-lg-7">
+												<button type="submit" class="btn">Ýatda sakla</button>
+											</div>
+										</div>
+
+									</form>
+
+                                <!-- Остальные вкладки (Makala goşmak, Profile sazla, Açar sözi üýtget) остаются без изменений -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

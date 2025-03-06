@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- About Start -->
+<style>
+  /* General form styling */
+  form {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+
+  h1 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+  }
+
+  .form-label {
+    font-weight: 600;
+  }
+
+  input[type="text"],
+  input[type="password"] {
+    width: 100%;
+    padding: 12px;
+    margin-top: 5px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-sizing: border-box;
+    font-size: 16px;
+  }
+
+  input[type="text"]:focus,
+  input[type="password"]:focus {
+    border-color: #007bff;
+    outline: none;
+  }
+
+  .error {
+    color: red;
+    font-size: 14px;
+    margin-bottom: 10px;
+    list-style-type: none;
+  }
+
+  .btn {
+    background-color: #007bff;
+    color: white;
+    padding: 12px;
+    width: 100%;
+    border-radius: 8px;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+  .btn:hover {
+    background-color: #0056b3;
+  }
+
+  .my-3 {
+    margin-top: 15px;
+    margin-bottom: 15px;
+  }
+
+  .text-center a {
+    color: #007bff;
+    font-size: 16px;
+    text-decoration: none;
+  }
+
+  .text-center a:hover {
+    text-decoration: underline;
+  }
+</style>
+
+<section class="py-3 py-md-5">
+  <h1 class="display-4 text-center fw-bolder">Agza bolmak</h1>
+  <div class="container d-flex justify-content-center mt-5">
+    <form action="" method="Post">
+      {% csrf_token %}
+      <div class="mb-3">
+        <label for="exampleInputEmail1" class="form-label">Username</label>
+        <div>{{ form.username }}</div>
+      </div>
+      <div class="mb-3">
+        <label for="exampleInputEmail1" class="form-label">Adyňyz</label>
+        <div>{{ form.first_name }}</div>
+      </div>
+      <div class="mb-3">
+        <label for="exampleInputEmail1" class="form-label">Familiýaňyz</label>
+        <div>{{ form.last_name }}</div>
+      </div>
+      <div class="mb-3">
+        <label for="exampleInputPassword1" class="form-label">Password</label>
+        <div>{{ form.password1 }}</div>
+      </div>
+      <div class="mb-3">
+        <label for="exampleInputPassword2" class="form-label">Confirm Password</label>
+        <div>{{ form.password2 }}</div>
+      </div>
+      <button type="submit" class="btn">Agza bolmak</button>
+
+      <div class="my-3">
+        {% if form.errors %}
+            <ul class="error">
+                {% for field, errors in form.errors.items %}
+                    {% for error in errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+    
+
+  <div class="container text-center">
+    <a href="{% url 'login' %}" class="h5 text-primary">
+      <span class="text-dark">Men eýýäm agza boldym.</span> Ulgama girmek
+    </a>
+  </div>
+</section>
+<!-- About End -->
+{% endblock %}

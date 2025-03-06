@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<!-- Page Content -->
+<div class="page-content bg-white">
+    <!-- Banner -->
+    <div class="page-banner overlay" style="background-image:url({% static 'assets/images/article.jpg' %});">
+        <div class="container text-center">
+            <h1 class="text-white">{{ article.title }}</h1>
+            <p class="text-light">{{ article.date_created|date }}</p>
+        </div>
+    </div>
+    
+    <!-- Breadcrumb -->
+    <div class="breadcrumb-row">
+        <div class="container">
+            <ul class="list-inline">
+                <li><a href="{% url 'index' %}">Baş sahypa</a></li>
+                <li><a href="{% url 'article' %}">Makalalar</a></li>
+                <li>{{ article.title }}</li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="content-block">
+        <div class="section-area section-sp1">
+            <div class="container">
+                <div class="row">
+                    <!-- Sidebar -->
+                    <aside class="col-lg-3 col-md-4 col-sm-12">
+                        <div class="article-sidebar">
+                            <div class="author-box text-center">
+                                <img src="{% static 'assets/images/testimonials/pic1.jpg' %}" alt="" class="rounded-circle mb-2" />
+                                <h5 class="mb-1">{{ article.user_name }}</h5>
+                                <span class="text-muted">tarapyndan goýuldy</span>
+                            </div>
+                            <hr>
+                            <div class="category-box text-center">
+                                <h5>{{ article.category }}</h5>
+                                <span class="text-muted">Kategoriýa</span>
+                            </div>
+                            <hr>
+                            <div class="actions text-center">
+                                <a href="{% url 'liked' article_id %}" class="btn btn-outline-primary w-100 mb-2"><i class="ti-thumb-up"></i> Like</a>
+                                <a href="{{ article.file.url }}" target="_blank" class="btn btn-outline-success w-100 mb-2"><i class="ti-eye"></i> Okamak</a>
+                                <a href="{{ article.file.url }}" download class="btn btn-outline-danger w-100"><i class="ti-download"></i> Download</a>
+                            </div>
+                        </div>
+                    </aside>
+                    
+                    <!-- Article Content -->
+                    <article class="col-lg-9 col-md-8 col-sm-12">
+                        {% if article.img %}
+                        <div class="article-image mb-4 text-center">
+                            <img src="{{ article.img.url }}" class="img-fluid rounded shadow" alt="">
+                        </div>
+                        {% endif %}
+                        
+                        <div class="article-content">
+                            <h2>{{ article.title }}</h2>
+                            <p class="text-justify">{{ article.description|safe }}</p>
+                        </div>
+
+                        <!-- Comment Section -->
+                        <section class="comments mt-5">
+                            <h4>Kommentariýalar</h4>
+                            <form action="{% url 'article_comment' article_id %}" method="post" class="mb-4">
+                                {% csrf_token %}
+                                <textarea class="form-control mb-2" name="comment" placeholder="Kommentariýa ýaz..." rows="4"></textarea>
+                                <button type="submit" class="btn btn-success">Ugrat</button>
+                            </form>
+                            
+                            {% for comment in article_comments %}
+                            <div class="comment-box p-3 mb-3 border rounded">
+                                <h6 class="mb-1">{{ comment.user }}</h6>
+                                <p class="text-muted small">{{ comment.date_comment|date }}</p>
+                                <p>{{ comment.comment|safe }}</p>
+                            </div>
+                            {% empty %}
+                            <p>Kommentariýalar ýok.</p>
+                            {% endfor %}
+                        </section>
+                    </article>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

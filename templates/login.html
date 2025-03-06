@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    body {
+        background: linear-gradient(135deg, #1e3c72, #2a5298);
+        color: #fff;
+        font-family: 'Arial', sans-serif;
+    }
+
+    h1 {
+        font-size: 2.5rem;
+        font-weight: bold;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    form {
+        width: 50%;
+        padding: 25px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        backdrop-filter: blur(10px);
+        animation: fadeIn 0.8s ease-in-out;
+    }
+
+    input {
+        background: rgba(255, 255, 255, 0.2);
+        color: #fff;
+        border: none;
+        padding: 10px;
+        border-radius: 8px;
+    }
+
+    input::placeholder {
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    input:focus {
+        background: rgba(255, 255, 255, 0.3);
+        border: 1px solid #fff;
+        outline: none;
+        transition: 0.3s;
+    }
+
+    .btn {
+        width: 100%;
+        background: #ff6f61;
+        border: none;
+        padding: 12px;
+        font-size: 18px;
+        font-weight: bold;
+        transition: transform 0.3s ease, background 0.3s ease;
+    }
+
+    .btn:hover {
+        background: #ff3b3b;
+        transform: scale(1.05);
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .error-message {
+        color: #ff3b3b;
+        font-weight: bold;
+        animation: shake 0.4s ease-in-out;
+    }
+
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-5px); }
+        50% { transform: translateX(5px); }
+        75% { transform: translateX(-5px); }
+    }
+</style>
+
+<section class="py-3 py-md-5 text-center">
+    <h1>Login bolmak</h1>
+    <div class="container d-flex justify-content-center mt-5">
+        <form action="" method="Post">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label class="form-label">Username</label>
+                <input type="text" name="username" required class="form-control" placeholder="Ulanyjy adyňyz">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Password</label>
+                <input type="password" name="password" required class="form-control" placeholder="Gizlin sözüňiz">
+            </div>
+            <button type="submit" class="btn btn-primary">Login bolmak</button>
+            <div class="my-3">
+                {% if error %}
+                <div class="error-message">{{ error }}</div>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+    <div class="container text-center mt-3">
+        <a href="{% url 'register' %}" class="h5 text-light"><span class="text-dark">Men agza bolmadym.</span> Agza bolmak</a>
+    </div>
+</section>
+{% endblock %}

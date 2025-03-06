@@ -1,0 +1,143 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<!-- Content -->
+<div class="page-content bg-white">
+	<!-- inner page banner -->
+	<div class="page-banner" style="background-image:url(../static/assets/images/article.jpg);">
+		<div class="container">
+			<div class="page-banner-entry">
+				<h1 class="text-white">Makalalar</h1>
+			</div>
+		</div>
+	</div>
+	<!-- Breadcrumb row -->
+	<div class="breadcrumb-row">
+		<div class="container">
+			<ul class="list-inline">
+				<li><a href="{% url 'index' %}">Baş sahypa</a></li>
+				<li>Makalalar</li>
+			</ul>
+		</div>
+	</div>
+	<!-- Breadcrumb row END -->
+	<!-- inner page banner END -->
+	<div class="content-block">
+		<!-- About Us -->
+		<div class="section-area section-sp1">
+			<div class="container">
+				<div class="row">
+					<div class="col-lg-3 col-md-4 col-sm-12 m-b30">
+						<div class="widget courses-search-bx placeani">
+							<div class="form-group">
+								<div class="input-group">
+									<form action="{% url 'search_article' %}" method="post">
+										{% csrf_token %}
+										<label>Makala gözleg</label>
+										<input name="makala" type="text" required class="form-control">
+									</form>
+								</div>
+							</div>
+						</div>
+						<div class="widget widget_archive">
+							<h5 class="widget-title style-1">Kategoriýalar</h5>
+							<ul>
+								{% for category in categories %}
+								<li><a href="{% url 'article' category.id %}">{{ category.name }}</a></li>
+								{% endfor %}
+							</ul>
+						</div>
+						<div class="widget">
+							<a href="#"><img src="assets/images/adv/adv.jpg" alt="" /></a>
+						</div>
+
+					</div>
+					<div class="col-lg-9 col-md-8 col-sm-12">
+						<div class="row">
+							{% if article_list %}
+							{% for article in article_list %}
+							<div class="col-md-6 col-lg-4 col-sm-6 m-b30">
+								<div class="cours-bx">
+									<div class="action-box" style="min-height: 200px;max-height: 200px;">
+										<img src="{{article.img.url}}" style="min-height: 200px;max-height: 200px;" alt="">
+										<a href="{% url 'article_detail' article.id %}" class="btn">Okamak</a>
+									</div>
+									<div class="info-bx text-center" style="min-height: 100px;max-height: 100px;">
+										<h6><a href="{% url 'article_detail' article.id %}">{{article.title|slice:40}}...</a></h6>
+										<span>{{article.category}}</span>
+									</div>
+									<div class="cours-more-info">
+										<div class="review d-flex justify-content-center align-items-center">
+											<i class="fa-solid fa-book-open-reader"></i>
+											<span class="mx-2" style="font-size: 18px;">{{ article.reads }}</span>
+										</div>
+										<div class="price">
+											<div class="d-flex align-items-center">
+												<a
+													style="width: 50px;height: 30px; display: flex;justify-content: center;align-items: center;"
+													><i class="fa-regular fa-thumbs-up"
+														style="width: 100%;" class="mx-2"></i></a>
+												<span class="price-old mx-1 fw-bolder"
+													style="font-size: 22px;">{{ article.likes }}</span>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							{% empty %}
+							<div class="col-md-6 col-lg-4 col-sm-6 m-b30">
+								<h1>Hiç hili makala tapylmady</h1>
+							</div>
+							{% endfor %}
+							{% else %}
+							<div class="col-md-6 col-lg-4 col-sm-6 m-b30">
+								<h1>Hiç hili makala tapylmady</h1>
+							</div>
+							{% endif %}
+
+							<div class="col-lg-12 m-b20">
+								<div class="pagination-bx rounded-sm gray clearfix">
+									<ul class="pagination">
+										{% if article_list.has_previous %}
+											<li class="previous">
+												<a href="?page={{ article_list.previous_page_number }}"><i class="ti-arrow-left"></i> Öňki</a>
+											</li>
+										{% else %}
+											<li class="previous disabled">
+												<span><i class="ti-arrow-left"></i> Öňki</span>
+											</li>
+										{% endif %}
+							
+										{% for num in article_list.paginator.page_range %}
+											{% if article_list.number == num %}
+												<li class="active"><a href="#">{{ num }}</a></li>
+											{% else %}
+												<li><a href="?page={{ num }}">{{ num }}</a></li>
+											{% endif %}
+										{% endfor %}
+							
+										{% if article_list.has_next %}
+											<li class="next">
+												<a href="?page={{ article_list.next_page_number }}">Indiki <i class="ti-arrow-right"></i></a>
+											</li>
+										{% else %}
+											<li class="next disabled">
+												<span>Indiki <i class="ti-arrow-right"></i></span>
+											</li>
+										{% endif %}
+									</ul>
+								</div>
+							</div>
+							
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- contact area END -->
+
+</div>
+<!-- Content END-->
+{% endblock content %}

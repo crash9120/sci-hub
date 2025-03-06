@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="page-wraper">
+	
+	<div class="account-form">
+		
+		<div class="account-form-inner">
+			<div class="account-container">
+				<div class="error-page">
+					<h2 class="error-title">404</h2>
+					<h5>Näsazlyk ýüze çykdy</h5>
+					<p>Baş sahypa dolanyň!</p>
+					<div class="">
+						<a href="{% url 'index' %}" class="btn black">Baş sahypa</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock content %}

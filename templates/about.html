@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <!-- Inner Content Box ==== -->
+    <div class="page-content">
+        <!-- Page Heading Box ==== -->
+        <div class="page-banner" style="background-image:url(../static/assets/images/newspapers.jpg);">
+            <div class="container">
+                <div class="page-banner-entry">
+                    <h1 class="text-white">Ulgam barada</h1>
+				 </div>
+            </div>
+        </div>
+		<div class="breadcrumb-row">
+			<div class="container">
+				<ul class="list-inline">
+					<li><a href="{% url 'index' %}">Baş sahypa</a></li>
+					<li>Ulgam barada</li>
+				</ul>
+			</div>
+		</div>
+		<!-- Page Heading Box END ==== -->
+		<!-- Page Content Box ==== -->
+		<div class="content-block">
+
+			
+            <!-- Our Story ==== -->
+			<div class="section-area bg-gray section-sp1 our-story">
+				<div class="container">
+					<div class="row align-items-center d-flex">
+						<div class="col-lg-5 col-md-12 heading-bx">
+							<h2 class="m-b10">Ulgam barada</h2>
+							<h5 class="fw4">Ylmy makalalar toplumy barada</h5>
+							<p>"Minimalizmiň we estetikanyň gabat gelýän ýerinde, pikirleriňizi iň ýönekeý görnüşde beýan etmegiňize kömek edýärin. Köp ýyllyk tejribe we döredijilik bilen birleşip, markaňyzyň şahsyýetini görkezýän özboluşly we täsirli dizaýnlary döredýärin.
+
+								Meniň üçin dizaýn diňe bir wizual toý däl, eýsem aragatnaşyk serişdesidir. Dizaýnlarym bilen, maksatly diňleýjileriň ýüregine degmegi we markaňyzy ýatdan çykarmazlygy maksat edinýärin. Minimalistik çemeleşmämiň kömegi bilen, dizaýnlarymda bulaşyklykdan arassa we düşnükli dil ulanylýar.
+						</div>
+						<div class="col-lg-7 col-md-12 heading-bx p-lr">
+							<div class="video-bx">
+								<img src="{% static 'assets/images/about/pic1.jpg' %}" alt=""/>
+								
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- Our Story END ==== -->
+		</div>
+		<!-- Page Content Box END ==== -->
+    </div>
+    <!-- Inner Content Box END ==== -->
+    {% endblock content %}

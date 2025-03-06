@@ -1,0 +1,9 @@
+asgiref
+Django
+django-ckeditor
+django-js-asset
+pillow
+sqlparse
+tzdata
+whitenoise
+django-jazzmin

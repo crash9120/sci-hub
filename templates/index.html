@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<link id="theme-style" rel="stylesheet" href="static/assets/css/color/color-1.css">
+
+
+<!-- Content -->
+<div class="page-content bg-white">
+    <!-- Main Slider -->
+    <div class="section-area section-sp1 ovpr-dark bg-fix online-cours"
+        style="background-image:url(assets/images/background/bg1.jpg);">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 text-center text-white">
+                    <h2>Sci-hub</h2>
+                    <h5>Ylmy makalalar toplumy</h5>
+                    <form class="cours-search" action="article/" method="POST">
+                        {% csrf_token %}
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="article" placeholder="Näme makala gözleýäňiz">
+                            <div class="input-group-append">
+                                <button class="btn" type="submit">Gözleg</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="mw800 m-auto">
+                <div class="row">
+                    <div class="col-md-4 col-sm-6">
+                        <div class="cours-search-bx m-b30">
+                            <div class="icon-box">
+                                <h3><i class="ti-user"></i><span class="counter">{{user_count}}</span></h3>
+                            </div>
+                            <span class="cours-search-text">Ulgamdaky ulanyjy sany</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-sm-6">
+                        <div class="cours-search-bx m-b30">
+                            <div class="icon-box">
+                                <h3><i class="ti-book"></i><span class="counter">{{article_count}}</span></h3>
+                            </div>
+                            <span class="cours-search-text">Ulgamdaky makala sany</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-sm-12">
+                        <div class="cours-search-bx m-b30">
+                            <div class="icon-box">
+                                <h3><i class="ti-layout-list-post"></i><span class="counter">{{ read_articles_count }}</span></h3>
+                            </div>
+                            <span class="cours-search-text">Meniň okan makalalarym.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Main Slider -->
+    <div class="content-block">
+        <!-- Popular Courses -->
+        <div class="section-area section-sp2 popular-courses-bx">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12 heading-bx left">
+                        <h2 class="title-head">Meşhur <span>Makalalar</span></h2>
+                        <p>Ulgamda has köp okalan makalalar</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="courses-carousel owl-carousel owl-btn-1 col-12 p-lr0">
+                        {% for article in most_liked_articles %}
+                        <div class="item">
+                            <div class="cours-bx">
+                                <div class="action-box" style="min-height: 150px; max-height: 150px;">
+                                    <img src="{{ article.img.url }}" style="min-height: 150px; max-height: 150px;" alt="">
+                                    <a href="{% url 'article_detail' article.id %}" class="btn">Okamak</a>
+                                </div>
+                                <div class="info-bx text-center" style="min-height: 100px; max-height: 100px;">
+                                    <h5>
+                                        <a href="{% url 'article_detail' article.id %}">
+                                            {{ article.title|truncatechars:40 }}
+                                        </a>
+                                    </h5>
+                                    
+                                    <span>{{ article.category }}</span>
+                                </div>
+                                <div class="cours-more-info">
+                                    <div class="review d-flex justify-content-center align-items-center">
+                                        {% if article.id in user_read_articles %}
+                                            <i class="fa-solid fa-book" style="color: green;"></i>
+                                        {% else %}
+                                            <i class="fa-solid fa-book-open-reader"></i>
+                                        {% endif %}
+                                        <span class="mx-2" style="font-size: 18px;">{{ article.reads }}</span>
+                                    </div>
+                                    <div class="price">
+                                        <div class="d-flex align-items-center">
+                                            <a style="width: 50px; height: 30px; display: flex; justify-content: center; align-items: center;">
+                                                {% if article.id in user_liked_articles %}
+                                                    <i class="fa-solid fa-thumbs-up" style="color: blue;"></i>
+                                                {% else %}
+                                                    <i class="fa-solid fa-thumbs-up"></i>
+                                                {% endif %}
+                                            </a>
+                                            <span class="price-old mx-1 fw-bolder" style="font-size: 22px;">{{ article.likes }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Popular Courses END -->
+        <div class="section-area section-sp2 bg-fix ovbl-dark join-bx text-center"
+            style="background-image:url(assets/images/background/bg1.jpg);">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="join-content-bx text-white">
+                            <h2>Ylym öwrenmek üçin hiç hili kynçylyk ýok</h2>
+                            <h4><span class="counter">{{article_count}}</span> makalalar</h4>
+                            <p class="h3 text-white">Ylmy maglumatlaryň hemmeler üçin açyk bolmalydygyna ynanýarys. Bu
+                                maksat bilen, ylmy makalalara mugt giriş berýäris.</p>
+                            <a href="{% url 'article' %}" class="btn button-md">Okamaga başla</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Form END -->
+
+    </div>
+    <!-- contact area END -->
+</div>
+<!-- Content END-->
+
+{% endblock content %}

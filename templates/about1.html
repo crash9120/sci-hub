@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html>
+    
+<!-- Mirrored from sci-hub.se/about by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 30 Jul 2024 13:17:50 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=UTF-8" /><!-- /Added by HTTrack -->
+<head>
+        <title>Sci-Hub: о проекте</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <script src="scripts/splide.min.js"></script>
+        <link rel="stylesheet" href="styles/splide.min.css">
+    </head>
+    <body onload = "start()">
+        <script type ="text/javascript">
+            
+            var reviewsSlideHor = null;
+            var paperSlide = null;
+            
+            function sliders()
+            {
+                if (window.innerWidth > 700)
+                {
+                    if (reviewsSlideHor === null)
+                    {
+                        reviewsSlideHor = new Splide( '#reviews-roll-horizontal .splide', {
+                          type     : 'loop',
+                          focus    : 'center',
+                          fixedWidth: '520px',
+                          autoHeight: true,
+                          gap: '4px',
+                          rewind: true,
+                          lazyLoad: 'nearby',
+                          pagination: false,
+                          autoplay: true,
+                        } );
+
+                        reviewsSlideHor.mount();
+                    }
+                }
+                else if (reviewsSlideHor !== null)
+                {
+                    reviewsSlideHor.destroy();
+                    reviewsSlideHor = null;
+                }
+                
+                if (window.innerWidth > 800)
+                {
+                    if (paperSlide === null)
+                    {
+                        paperSlide = new Splide( '#paper-roll', {
+                          type     : 'loop',
+                          focus    : 'center',
+                          fixedWidth: '100%',
+                          autoHeight: true,
+                          gap: '64px',
+                          rewind: true,
+                          lazyLoad: 'nearby',
+                          pagination: false,
+                          autoplay: false,
+                          perPage: 1
+                        } );
+
+                        paperSlide.mount();
+                    }
+                }
+                else if (paperSlide !== null)
+                {
+                    paperSlide.destroy();
+                    paperSlide = null;
+                }
+            }
+            
+            function start()
+            {
+                sliders();
+                
+                window.addEventListener('resize', function(event) { sliders(); }, true);
+                
+            }
+            
+        </script>
+        
+        <style type = "text/css">
+
+@font-face
+{
+    font-family: 'Courier Prime';
+    src: url('fonts/CourierPrime-Regular.ttf');        
+}
+
+@font-face
+{
+    font-family: 'Courier 10';
+    src: url('fonts/courier_10_pitch_win95bt.ttf');        
+}
+
+@font-face
+{
+    font-family: 'Courier Prime';
+    src: url('fonts/CourierPrime-SemiBold.ttf');
+    font-weight: bold;
+}
+
+@font-face
+{
+    font-family: 'Mono';
+    src: url('fonts/FiraCode-Regular.ttf');        
+}
+
+@font-face
+{
+    font-family: 'Mono';
+    src: url('fonts/FiraCode-SemiBold.ttf');
+    font-weight: bold;
+}
+
+@font-face
+{
+    font-family: 'Carmelit';
+    src: url('fonts/Carmelit%20Bold%20Bold.ttf');
+}
+
+html, body, div { margin: 0; padding: 0; border: 0 }
+div { z-index: 2; font-family: 'Mono'; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+
+html { font-size: 16px; }
+html, body { width: 100% }
+
+#header { padding: 0 0 0 2%; background: white }
+#logo, #logo span, #logo img, #menu, #menu span, #menu a { display: inline-block; vertical-align: middle;  font-family: 'Courier Prime' }
+#logo { margin-top: 4vh; white-space: nowrap; }
+#logo a { text-decoration: none; color: darkred }
+#logo img { vertical-align: middle }
+#logo span { font-size: 4rem; font-weight: bold; vertical-align: top; margin-left: 2% }
+#logo .back { font-size: 1.22rem;  vertical-align: top }
+#logo a:hover .back { text-decoration: underline }
+#logo img { width: 7rem }
+#menu { margin-left: 2%; border-bottom: solid 2px #ccc; min-width: 50%; }
+#menu a { display: inline-block; font-size: 1.33rem; text-align: center; margin: 0 0 0 3%; text-decoration: underline; }
+#menu a:hover { background: #e8a202 }
+#menu a:hover span { color: white }
+#menu span { display: inline-block; margin-top: 1.88rem; color: #444; font-family: 'Courier Prime' }
+#menu .selected, #menu .selected:hover { cursor:default; background: white; }
+#menu .selected:hover span { color: darkred; }
+#menu .selected span { font-size: 2.44rem; color: darkred; }
+#menu .donate:hover { background: green }
+
+@media only screen and (max-width: 1000px)
+{
+    #menu { text-align: center; width: 96%; border-bottom: 0 }
+    #menu span { margin-top: 1rem }
+}
+
+@media only screen and (max-width: 950px)
+{
+    #menu { width: 96% }
+}
+
+@media only screen and (max-width: 600px)
+{
+    #header { padding-left: 0 }
+    #logo span { margin-left: 0;  font-size: 3.77rem; }
+}
+
+
+
+.content { margin: 0; font-size: 1.33rem; width: 100%; overflow: hidden; background: white }
+.content .he { font-size: 3rem; font-weight: bold }
+.content .te, .content .im { display: inline-block; vertical-align: middle; white-space: normal; }
+.content .im { margin-left: 2% }
+.content .im img { max-width: 100% }
+.content .im:first-of-type { margin: 0 }
+
+.content a { color: black; text-decoration: none; font-weight: bold }
+.content a:hover { background: greenyellow; text-decoration: none; color: black }
+.content a.orange { color: #e8a202; font-size: 1.33rem; cursor: pointer; font-weight: bold; }
+.content a.orange-back { background: lightyellow }
+.content a.orange:hover { color: black; background: greenyellow }
+
+.content .red { color: darkred; font-weight: bold; white-space: nowrap }
+.content .dashed { border-bottom: dashed 1px #444; }
+
+.overview { margin-top: 8vh; white-space: nowrap }
+.overview .te { margin-left: 4%; max-width: 44% }
+.overview .he { font-size: 1.77rem; font-weight: normal }
+
+.column { white-space: normal; display: inline-block; width: 40%; margin-left: 2%; border-left: dashed 2px #aaa; padding-left: 2%; vertical-align: middle }
+.column:first-of-type { padding: 0; border: 0; margin-left: 3%; width: 50% }
+
+#reviews-roll-horizontal { margin-top: 9vh; width: 100%; padding-bottom: 3vh }
+#reviews-roll-horizontal .splide { cursor: pointer; cursor: url('pictures/drag.png'), auto; }
+#reviews-roll-horizontal .splide ul {
+    display: flex;
+    align-items: center;
+}
+#reviews-roll-horizontal .splide ul li img { background: white; width: 97%; border: solid 1px #ccc; border-radius: 16px; padding: 0.2vw }
+
+#reviews-roll-horizontal .splide__arrows button { background: goldenrod; height: 77px; width: 77px; opacity: .85 }
+#reviews-roll-horizontal .splide__arrows svg { fill: white }
+#reviews-roll-horizontal .splide__arrows button:hover { opacity: 1 }
+
+#medicine { margin-top: 4vh; white-space: nowrap }
+#medicine .im {  }
+#medicine .te { max-width: 66%; margin-left: 4%  }
+#medicine .he, #medicine a { color: #f76934 }
+#medicine a:hover { color: black }
+#medicine .he a:hover { background: none; color: #f76934; font-size: 3.44rem }
+
+#oa { margin-top: 12vh }
+#oa .he a { color: darkorange; font-size: 4rem }
+#oa .he a:hover { background: none; font-size: 4.33rem }
+#oa .te { vertical-align: middle; max-width: 64%; margin-left: 2% }
+#oa .im { vertical-align: middle; max-width: 22%; margin-left: 4% }
+#oa .im img { width: 96% }
+
+#legal { margin: 11vh 0 0 4%;  }
+#legal .he a { color: darkred; font-size: 4rem }
+#legal .he a:hover { font-size: 4.22rem; background: none }
+#legal .te { max-width: 55% }
+#legal .im { width: 36%; vertical-align: bottom; margin-left: 3%; line-height: 0; text-align: center }
+#legal .im img { width: 90%;  }
+#legal-border { border-bottom: dashed 1px darkred; }
+
+#history { margin: 6vh 0 0 4% }
+#history .he a { background: none; font-size: 3.77rem; color: #888; text-decoration: none; border-bottom: dashed 2px #888 }
+#history .he a:hover { background: none; color: #444; border-color: #444 }
+#history .te { margin: 2vh 0 0 0; width: 55% }
+#history .im { display: none; margin-left: 0; width: 33% }
+#history .im img { width: 100% }
+
+#papers { margin: 12vh 0 0 4% }
+#papers .he a { font-size: 3.77rem; color: darkblue; text-decoration: none; }
+#papers .he a:hover { background: none; font-size: 4rem }
+#papers .te { width: 33%; vertical-align: top }
+#papers .im { width: 60%; margin-left: 4%; vertical-align: top }
+#papers .im img.study { width: 90%; background: white; padding: 16px; border: dashed 4px #aaa; border-radius: 16px }
+#papers a { color: darkblue }
+
+#paper-roll .splide__arrows button { background: skyblue; height: 77px; width: 77px; opacity: .85 }
+#paper-roll .splide__arrows svg { fill: white }
+#paper-roll .splide__arrows button:hover { opacity: 1 }
+#paper-roll .splide__arrow--prev { left: -4em }
+#paper-roll .splide__arrow--next { right: 0 }
+
+#media { margin: 2vh 0 0 4% }
+#media .he a { font-size: 3.77rem; color: #666; text-decoration: none }
+#media .he a:hover { background: none; color: #888; border-color: #444 }
+#media .te { margin-top: 2vh; width: 66% }
+#media a { color: #444; border-bottom: dashed 1px #444; font-size: 1.33rem }
+#media a:hover { border: none }
+
+#contact { margin-top: 14vh; width: 100%; font-size: 1.33rem }
+#contact .he { font-size: 3rem; color: darkred; font-weight: bold; cursor: default }
+#contact .te { display: inline-block; max-width: 60%; margin-left: 4%; vertical-align: middle }
+#contact a { text-decoration: none; color: darkred; font-size: 1.33rem }
+#contact a:hover { background: none; border-bottom: dotted 2px darkred }
+#contact .im { display: inline-block; max-width: 30%; text-align: center; margin: 0; vertical-align: middle }
+#contact .im img { width: 100%; }
+
+#legal-img-small { display: none }
+#oa-img-small { display: none }
+
+@media only screen and (max-width: 1400px)
+{
+    #medicine .im { max-width: 40% }
+    #medicine .te { width: 55%; margin-left: 4% }
+}
+
+@media only screen and (max-width: 1300px)
+{
+    #legal .im { width: 43%; margin-left: 0; vertical-align: middle; text-align: right }
+    #legal .im img { transform: rotate(270deg);  }
+    
+    #history .te { width: 60% }
+    #oa .te { vertical-align: top }
+    
+    #media, #papers, #history, #legal { margin-left: 2% }
+}
+
+@media only screen and (max-width: 1000px)
+{
+    #papers { margin-top: 2vh }
+    #papers .im, #papers .te { display: block; width: 96% }
+    #history .te, #media .te { width: 96% }
+    
+    .overview .im { max-width: 44% }
+    .overview .im:nth-of-type(3) { display: none }
+}
+
+@media only screen and (max-width: 800px)
+{
+    #legal .te, #oa .te, .overview .te, #papers .te, #media .te, #history .te, #medicine .te { max-width: 96%; width: 96%; margin-left: 2% }
+    .overview .im, #papers .im, #history .im, #medicine .im { display: none }
+    #papers { margin-top: 2vh }
+    
+    #legal .im, #oa .im { display: none }
+    
+    #legal-img-small { display: inline-block; margin-left: 2rem; width: 44% }
+    #oa-img-small { display: inline-block; margin-right: 2rem; width: 30% }
+    
+    .column, .column:first-of-type { display: block; width: 90%; margin: 2vh 0 0 2%; padding: 0; border: 0 }
+    
+    .overview { margin-top: 3vh }
+    .overview .im, .overview .te { display: block; max-width: 96%; }
+    .overview .te { margin-left: 2% }
+    #reviews-roll-horizontal { margin-top: 2vh }
+    
+    .content .red { white-space: normal }
+    #contact { margin: 3vh 0 0 2% }
+}
+
+@media only screen and (max-width: 700px)
+{
+    #reviews-roll-horizontal { display: none }
+}
+
+@media only screen and (max-width: 500px)
+{
+    #contact .te { max-width: 96%; margin-left: 0 }
+    #contact .im { display: none }
+    
+    #legal-img-small { display: block; width: 96%; border-bottom: dashed 2px darkred }
+    #legal .he, #oa .he { text-align: center }
+    #oa-img-small { display: block; width: 55%; margin-left: 22% }
+}
+
+</style>
+
+
+        <style type = "text/css">
+
+#logo, #logo span, #logo img, #menu, #menu span, #menu a { font-family: 'Courier 10' }
+
+</style>
+
+
+        <div id = "header"><script type = "text/javascript">
+                        function language(la)
+                        {
+                            document.cookie = "language=; Max-Age=-99999999;"; 
+                            document.cookie = "language" + "=" + la + "; path=/";
+                            window.location.reload();
+                        }
+                    </script><style type = "text/css">#langi { position: fixed; background: white; font-size: 1.11rem; top: 0; right: 2vw; padding: 0.4vw; border: solid 1px #ccc; border-radius: 0.4vw }
+#langi a { display: inline-block; margin-left: 8px; color: #777; text-decoration: none; padding: 0.2vh 0.2vw 0.2vh 0.2vw; border-radius: 0.2vw }
+#langi a:hover { background: green; color: white }
+#langi a.selected { background: #e8a202; color: white }
+#langi a:hover.selected { background: #e8a202 }
+
+@media only screen and (max-width: 600px)
+{
+    body { margin-top: 48px }
+    #langi { position: absolute; font-size: 0.88rem; right: auto; left: 0; padding: 0 2% 0 2%; width: 96%; text-align: center;  background:  #444; border: 0; }
+    #langi a { color: white; }
+    #langi a.selected { background: white; color: black; }
+}</style><script type = "text/javascript">
+                        function language(la)
+                        {
+                            document.cookie = "language=; Max-Age=-99999999;"; 
+                            document.cookie = "language" + "=" + la + "; path=/";
+                            window.location.reload();
+                        }
+                    </script><div id = "langi"><span class = "list"><a href = # class = "selected">Русский</a><a href = # onclick = "language('en')">English</a><a href = # onclick = "language('cn')">简体中文</a><a href = # onclick = "language('pt')">Português</a></span></div><div id = "logo">
+                        <span><img src = "pictures/ravenround_hs.gif"></span>
+                        <span><a href = "index.html">sci-hub<br><b class = "back">&larr; на главную</b></a></span>
+                    </div><div id = "menu"> <a href = "database.html" class = "o"><span>база</span></a> <a href = # class = "o selected"><span>о проекте</span></a> <a href = "alexandra.html" class = "o"><span>Элбакян</span></a> <a href = "stats.html" class = "o"><span>статистика</span></a> <a href = "donate.html" class = "o donate"><span>помочь</span></a></div></div>
+
+        <div class = "content">
+            <div class = "overview">
+                <div class ="im">
+                    <img src ="pictures/lenin.jpg">
+                </div><div class = "te">
+                    <p class = "he">
+                        <span><span class = "red">Sci-Hub</span> - это революция в современной науке.
+                            Цель проекта Sci-Hub - <span class = "red">свободный и неограниченный</span>
+                            доступ ко всему научному знанию.</span></p>
+                </div><div class ="im">
+                    <img src ="pictures/periodic.png">
+                </div>
+            </div>
+        </div>
+        
+        <div class = "content overview">
+            <div class = "column">Sci-Hub начинался как небольшой проект для быстрого доступа к статьям из научных журналов -
+                   такие статьи - главный способ коммуникации научного знания сегодня.
+                   За несколько лет Sci-Hub <a href = "database.html"
+                  class = "dashed">вырастил базу данных в <span class = "red">88,343,822</span> научных статей и книг</a>
+                  - которая бесплатна для чтения и скачивания.
+            </div><div class = "column">
+                До Sci-Hub это знание было доступно только по очень высоким ценам, которые большинство людей не могут платить. 
+                Sci-Hub произвел революцию в науке, сделав это знание свободным.</div>
+        </div>
+        
+        <div id ="reviews-roll-horizontal">
+            <div class="splide">
+                <div class="splide__track">
+                    <ul class="splide__list">
+                        <li class="splide__slide"><img src = "pictures/tweets/2016...matjazgregoric...status...803230773071388673.png"></li>
+<li class="splide__slide"><img src = "pictures/tweets/2016...aligha1981...status...802528795072860160.png"></li>
+<li class="splide__slide"><img src = "pictures/tweets/2015...lakens...status...674526171065802753.png"></li>
+<li class="splide__slide"><img src = "pictures/tweets/2016...sapkota_prajwal...status...726764120649793536.png"></li>
+<li class="splide__slide"><img src = "pictures/tweets/2020...BoruPT...status...1310542936057221120.png"></li>
+<li class="splide__slide"><img src = "pictures/tweets/2016...magmasalud...status...794299446293053441.png"></li>
+<li class="splide__slide"><img src = "pictures/tweets/2016...AsoganMoodaly...status...717663393222631424.html"></li>
+<li class="splide__slide"><img src = "pictures/tweets/2013...skarramishale...status...403952503533744128.html"></li>
+<li class="splide__slide"><img src = "pictures/tweets/2013...micknudsen...status...380292071007207424.html"></li>
+<li class="splide__slide"><img src = "pictures/tweets/2016...tanvirapaul...status...701030244820463616.html"></li>
+<li class="splide__slide"><img src = "pictures/tweets/2016...Graham42x...status...720633495966515201.html"></li>
+<li class="splide__slide"><img src = "pictures/tweets/2016..Protohedgehog...status...700635837143207936.html"></li>
+<li class="splide__slide"><img src = "pictures/tweets/2016...amialuthfia...status...741855909593288704.html"></li>
+<li class="splide__slide"><img src = "pictures/tweets/2013...eferreme...status...293119380945006593.html"></li>
+<li class="splide__slide"><img src = "pictures/tweets/2016...kmccready...status...803396869804068864.html"></li>
+<li class="splide__slide"><img src = "pictures/tweets/2016...rmounce...status...750002282679377920.html"></li>
+<li class="splide__slide"><img src = "pictures/tweets/2020...nidioot...status...1309559833624895488.html"></li>
+<li class="splide__slide"><img src = "pictures/tweets/2013...Protohedgehog...status...324505525972770816.html"></li>
+<li class="splide__slide"><img src = "pictures/tweets/2014...odiandoelverano...status...471863012333080576.html"></li>
+<li class="splide__slide"><img src = "pictures/tweets/2020...wanderer_jasnah...status...1233673782570688512.html"></li>
+<li class="splide__slide"><img src = "pictures/tweets/2016...DevTen85...status...745239915449876480.html"></li>
+<li class="splide__slide"><img src = "pictures/tweets/2013...lauraayalab...status...309457973879635969.html"></li>
+<li class="splide__slide"><img src = "pictures/tweets/2017...Vansteenwinckel...status...910540157257945089.html"></li>
+<li class="splide__slide"><img src = "pictures/tweets/2016...buzoreyes...status...794569200052371457.html"></li>
+<li class="splide__slide"><img src = "pictures/tweets/2016...fabtext...status...733309514972336131.html"></li>
+<li class="splide__slide"><img src = "pictures/tweets/2016...biologizing...status...766846388609048576.html"></li>
+<li class="splide__slide"><img src = "pictures/tweets/2016...dna_lam...status...742077318840102912.html"></li>
+<li class="splide__slide"><img src = "pictures/tweets/2016...mtimofiiv...status...726849092958064641.html"></li>
+<li class="splide__slide"><img src = "pictures/tweets/2016...overcomplete_...status...736702781738778624.html"></li>
+<li class="splide__slide"><img src = "pictures/tweets/2016...summerabbas514...status...702879528872505345.html"></li>
+<li class="splide__slide"><img src = "pictures/tweets/2016...TheWerelizard...status...704348727939637248.html"></li>
+<li class="splide__slide"><img src = "pictures/tweets/2016...bellnabilah...status...727677680544448512.html"></li>
+<li class="splide__slide"><img src = "pictures/tweets/2018...matthew_d_green...status...951816257933803520.html"></li>
+<li class="splide__slide"><img src = "pictures/tweets/2015...AndreFernandes2...status...675093161090355200.html"></li>
+<li class="splide__slide"><img src = "pictures/tweets/2016...SebastianMaki...status...801924563487649792.html"></li>
+<li class="splide__slide"><img src = "pictures/tweets/2015...kathakara...status...679776752869240832.html"></li>
+<li class="splide__slide"><img src = "pictures/tweets/2013..._athaydes...status...344549077100421120.html"></li>
+<li class="splide__slide"><img src = "pictures/tweets/2020...Duyvvu...status...1264847551439593473.html"></li>
+<li class="splide__slide"><img src = "pictures/tweets/2016...bowskeyes...status...700688972918366208.html"></li>
+<li class="splide__slide"><img src = "pictures/tweets/2020...hillelogram...status...1297928216783486978.html"></li>
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class = "content">
+            <div class = "column">
+                Миллионы людей по всему миру используют Sci-Hub для того, чтобы получить доступ к знанию.
+                Это не только те, кто живет в бедных странах.
+                Проект также любят в США и Европе. Подробная статистика по странам есть
+                <a class = "orange orange-back" href = "stats.html">в этом разделе</a>.
+            </div><div class = "column">
+                <p>Sci-Hub невероятно популярен среди ученых. Студенты с помощью Sci-Hub делают свои дипломы и научные проекты, которые <a class = "orange orange-back" href = "theses.html">можно посмотреть здесь.</a></p>
+                <p>Sci-Hub также помогает журналистам, стартапам, и всем, кто любит изучать новые вещи.</p>
+            </div>
+        </div>
+        
+        <div class = "content" id = "medicine">
+            <div class = "im">
+                <img src ="pictures/medhand.html">
+            </div><div class = "te">
+                <div class = "he"><a href = "medicine.html">медицина</a></div>
+                <p>Проектом пользуется много врачей, так как довольно солидная часть научных журналов - это журналы по медицине.
+                </p><p>Sci-Hub помогает правильно ставить диагнозы и назначать лечение: свободный доступ к информации спасает жизни людей. Отзывы от врачей можно <a href = "medicine.html">почитать тут.</a></p>
+            </div>
+        </div>
+            
+        <div class = "content">
+            
+            <div id = "oa">
+                <div class = "im">
+                    <img src ="pictures/oa.html">
+                </div><div class = "te">
+                    <div class = "he"><a href = #><img src ="pictures/oa.html" id = "oa-img-small" align = "left">открытый доступ</a></div>
+                    <p>Sci-Hub - часть движения за открытый доступ в науке. Движение появилось в науке в девяностых как реакция на постоянно растущие цены на научные журналы: библиотеки университетов не смогли оплачивать подписку. Библиотекари и ученые стали выступать за то, чтобы сделать доступ к научным знаниям <b>дешевым или бесплатным</b>.</p>
+                    <p>Высокие цены ничем не оправданы и стали возможны только из-за монополии научных издательств. Главное: авторы статей в научных журналах получают <b>ноль</b> денег за свою работу.<!-- <a class ="orange" target = "/oa">Подробнее о движении открытого доступа можно почитать здесь.</a>--></p>
+                    <p>Sci-Hub стал наиболее ярким и радикальным представителем движения открытого доступа - и наиболее успешным!</p>
+                </div>
+
+            </div>
+            
+            <div id ="legal">
+                <div class = "te">
+                    <div class = "he"><a href = #><img src ="pictures/protest-red.html" id = "legal-img-small" align = "right">закон</a></div>
+                    <p>Sci-Hub получил много судебных исков со стороны научных издательств. Они утверждают, что проект Sci-Hub нелегален, и обвиняют проект в нарушении закона о копирайте, то есть пиратстве.
+                        В результате судебных исков доступ к Sci-Hub блокирован в некоторых странах.</p>
+                    <p>Официальная позиция проекта Sci-Hub такова: <b>проект полностью законен, а вот ограничение доступа к информации и знаниям - нет.</b>
+                       Это нарушение прав человека.</p>
+                <!--   <p>Больше информации о <a class = "red" href = "/law">исках против Sci-Hub есть в этом разделе.</a></p> -->
+                </div>
+                <div class = "im"><img src ="pictures/protest-red.html"></div>
+            </div>
+            
+        </div>
+        <div id ="legal-border"></div>
+        
+        <!--
+        <div class = "content">
+            
+            <div id = "history">
+                <div class = "im"><img src ="/pictures/gears.png"></div>
+                <div class = "te">
+                    <div class = "he"><a href = "/history">история и технологии</a></div>
+                    <p>история разработки Sci-Hub и какие технические подходы применяются</p>
+                </div>
+            </div>
+            
+            <div id ="papers">
+                <div class = "te">
+                    <div class = "he"><a href = "/papers">исследования</a></div>
+                    <p>Про Sci-Hub опубликовано много статей в научных журналах. <a href = "/papers">В этом разделе</a> их можно скачать и почитать. Частично они критикуют Sci-Hub и частично поддерживают. В статьях могут быть неточности.</p>
+                </div><div class = "im">
+                    
+                    <div class="splide" id = "paper-roll">
+                        <div class="splide__track">
+                            <ul class="splide__list">
+                                <li class="splide__slide"><img class="study" src ="/pictures/studies/bendezu2016.png"></li>
+<li class="splide__slide"><img class="study" src ="/pictures/studies/bodo2016.png"></li>
+<li class="splide__slide"><img class="study" src ="/pictures/studies/chen2016.png"></li>
+<li class="splide__slide"><img class="study" src ="/pictures/studies/himmel2018.png"></li>
+<li class="splide__slide"><img class="study" src ="/pictures/studies/marple2018.png"></li>
+
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    
+                </div>
+            </div>
+            
+            <div id ="media">
+                <div class = "he"><a href = "/media">СМИ</a></div>
+                <div class = "te">Про Sci-Hub немного писали в средствах массовой информации. <a href = "/media">Статьи можно посмотреть в этом разделе</a>, хотя они не всегда точные.</div>
+            </div>
+            
+        </div>
+        -->
+
+        <div id ="contact">
+            <div class = "im"><img src ="pictures/dna.html"></div>
+            <div class = "te">
+                <div class = "he">контакты</div>
+                <p>по всем вопросам насчет Sci-Hub пишите <a href = "alexandra.html">мне</a> по электронной почте: <a href = "mailto:alexandra@dns.cymru">alexandra@dns.cymru</a></p>
+            <!--    <p>адреса проекта в социальных сетях <a href = "/social">можно найти тут.</a></p>-->
+            </div>
+        </div>
+
+ 
+    </body>
+
+<!-- Mirrored from sci-hub.se/about by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 30 Jul 2024 13:18:05 GMT -->
+</html>
