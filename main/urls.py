@@ -17,5 +17,8 @@ urlpatterns = [
     path('add_article/', views.add_article, name='add_article'),
     path('base/', views.base, name='base'),
     path('about1/', views.about1, name='about_new'),
-    path('register/', views.register, name='register')
+    path('register/', views.register, name='register'),
+    path('article/category/<int:category_id>/', views.article_by_category, name='article_by_category')
+
+    
 ]

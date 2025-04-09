@@ -7,6 +7,7 @@ from django.contrib import messages
 from .forms import ArticleForm
 from django.db.models import Count
 from django.core.paginator import Paginator
+from random import sample
 
 def get_most_liked_articles(num_articles=5):
     most_liked_articles = models.Article_like.objects.values('article_like') \
@@ -19,20 +20,34 @@ def get_most_liked_articles(num_articles=5):
     return most_liked_articles
 
 def index(request):
-    read_articles_count = models.Article_read.objects.filter(user=request.user).count()
+    # Проверяем, аутентифицирован ли пользователь
+    if request.user.is_authenticated:
+        read_articles_count = models.Article_read.objects.filter(user=request.user).count()
+        articles = models.Arcticle.objects.filter(user_name__icontains=request.user.username)  # Предположим, что user_name — это поле в модели
+    else:
+        read_articles_count = 0
+        articles = models.Arcticle.objects.all()  # Для анонимного пользователя показываем все статьи
 
-    # count user in USER model
-    articles = models.Arcticle.objects.filter(user_name__icontains=request.user.username)
+    # Получаем количество пользователей и статей
     user_count = User.objects.count()
     article_count = models.Arcticle.objects.count()
-    most_liked_articles = get_most_liked_articles()
-    context = {'user_count': user_count, 
-    'article_count': article_count,
-    'most_liked_articles': most_liked_articles,
-    'read_articles_count': read_articles_count,
-    
+
+    articles = models.Arcticle.objects.all()
+    random_articles = sample(list(articles), min(len(articles), 30))
+# kategoriya uçin
+    categories = models.ArticleCategory.objects.annotate(article_count=Count('arcticle'))
+
+    context = {
+        'user_count': user_count,
+        'article_count': article_count,
+        'random_articles': random_articles,
+        'read_articles_count': read_articles_count,
+        'categories': categories
     }
-    return render(request, 'index.html',context)
+    
+    return render(request, 'index.html', context)
+
+
 
 
 def article_list(request):
@@ -104,23 +119,38 @@ def article_detail(request, article_id):
     if hasattr(article, 'increment_read'):
         article.increment_read()
 
-    article_comments = models.Article_comment.objects.filter(article_comment__id=article_id)
-    context = {'article': article, 'article_id': article_id, 'article_comments': article_comments}
+    # Если пользователь аутентифицирован, создаём запись о прочтении статьи
     if request.user.is_authenticated:
-        models.Article_read.objects.get_or_create(user=request.user, article_read=article)
+        # Проверяем, существует ли запись о том, что пользователь прочитал статью
+        read_record, created = models.Article_read.objects.get_or_create(user=request.user, article_read=article)
+        
+        if created:
+            # Если запись о прочтении только что создана, увеличиваем счётчик прочтённых статей
+            read_articles_count = models.Article_read.objects.filter(user=request.user).count()
+        else:
+            read_articles_count = models.Article_read.objects.filter(user=request.user).count()
+    else:
+        read_articles_count = 0  # Для анонимных пользователей счётчик 0
+
+    article_comments = models.Article_comment.objects.filter(article_comment__id=article_id)
+    context = {
+        'article': article,
+        'article_id': article_id,
+        'article_comments': article_comments,
+        'read_articles_count': read_articles_count  # Передаем количество прочитанных статей в контекст
+    }
+    
     return render(request, 'article_detail.html', context)
 
 
 @login_required
-def article_comment(request,article_id):
-    print('comment_page')
+def article_comment(request, article_id):
     if request.method == 'POST':
-        print('post method is work')
         article = models.Arcticle.objects.filter(id=article_id).first()
         user = request.user
         comment = request.POST['comment']
         models.Article_comment.objects.create(article_comment=article, user=user, comment=comment)
-    
+
     return redirect('article_detail', article_id=article_id)
 
 # def http404(request):
@@ -170,16 +200,17 @@ def profile(request):
 @login_required
 def add_article(request):
     if request.method == 'POST':
-       form = ArticleForm(request.POST, request.FILES)
-       if form.is_valid():
-           article = form.save(commit=False)
-           article.user_name = request.user.username
-           article.save()
-           return redirect('profile')
+        form = ArticleForm(request.POST, request.FILES)
+        if form.is_valid():
+            article = form.save(commit=False)
+            article.user_name = request.user.username
+            article.save()
+            return redirect('profile')
     else:
         form = ArticleForm()
-    
+
     return render(request, 'add_article.html', {'form': form})
+
 def register(request):
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
