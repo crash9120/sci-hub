@@ -9,7 +9,7 @@ class Article_CommentForm(forms.Form):
 
 class ArticleForm(forms.ModelForm):
     class Meta:
-        model = models.Arcticle
+        model = models.Article
         fields = '__all__'
         exclude = ['user_name']
 

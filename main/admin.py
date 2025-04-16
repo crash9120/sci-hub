@@ -1,7 +1,7 @@
 from django.contrib import admin
 from . import models
 
-class ArcticleAdmin(admin.ModelAdmin):
+class ArticleAdmin(admin.ModelAdmin):
     list_display = ('id','title', 'category', 'date_created', 'user_name','description')
     search_fields = ('title', 'category__name', 'user_name')
     list_filter = ('category', 'date_created')
@@ -18,7 +18,7 @@ class ReadAdmin(admin.ModelAdmin):
 
 
 admin.site.register(models.ArticleCategory)
-admin.site.register(models.Arcticle,ArcticleAdmin)
+admin.site.register(models.Article,ArticleAdmin)
 admin.site.register(models.Article_like,LikeAdmin)
 admin.site.register(models.Article_read,ReadAdmin)
 admin.site.register(models.Article_comment,CommentAdmin)

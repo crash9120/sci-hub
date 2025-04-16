@@ -5,7 +5,7 @@ import django
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'makala.settings')
 django.setup()
 
-from main.models import Arcticle, ArticleCategory
+from main.models import Article, ArticleCategory
 from django.core.files import File
 
 # Укажите путь к папке с PDF-файлами
@@ -27,7 +27,7 @@ for pdf_file in os.listdir(pdf_folder):
         title = os.path.splitext(pdf_file)[0]
 
         # Создаем экземпляр статьи
-        article = Arcticle(
+        article = Article(
             title=title,  # Название файла
             category=category,
             description=f"Файл {pdf_file}",

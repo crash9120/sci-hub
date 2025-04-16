@@ -15,36 +15,48 @@ def get_most_liked_articles(num_articles=5):
         .order_by('-like_count')[:num_articles]
     
     article_ids = [item['article_like'] for item in most_liked_articles]
-    most_liked_articles = models.Arcticle.objects.filter(id__in=article_ids)
+    most_liked_articles = models.Article.objects.filter(id__in=article_ids)
 
     return most_liked_articles
 
 def index(request):
-    # Проверяем, аутентифицирован ли пользователь
-    if request.user.is_authenticated:
-        read_articles_count = models.Article_read.objects.filter(user=request.user).count()
-        articles = models.Arcticle.objects.filter(user_name__icontains=request.user.username)  # Предположим, что user_name — это поле в модели
+
+    user = request.user
+    is_auth = user.is_authenticated
+
+    if is_auth:
+        read_articles_qs = models.Article_read.objects.filter(user=user)
+        liked_articles_qs = models.Article_like.objects.filter(user=user)
+
+        read_articles_count = read_articles_qs.count()
+        user_read_articles = read_articles_qs.values_list('article_read_id', flat=True)
+        user_liked_articles = liked_articles_qs.values_list('article_like_id', flat=True)
+
+        articles = models.Article.objects.filter(user_name__icontains=user.username)
     else:
         read_articles_count = 0
-        articles = models.Arcticle.objects.all()  # Для анонимного пользователя показываем все статьи
+        user_read_articles = []
+        user_liked_articles = []
+        articles = models.Article.objects.all()
 
-    # Получаем количество пользователей и статей
     user_count = User.objects.count()
-    article_count = models.Arcticle.objects.count()
+    article_count = models.Article.objects.count()
 
-    articles = models.Arcticle.objects.all()
-    random_articles = sample(list(articles), min(len(articles), 30))
-# kategoriya uçin
-    categories = models.ArticleCategory.objects.annotate(article_count=Count('arcticle'))
+    all_articles = list(models.Article.objects.all())
+    random_articles = sample(all_articles, min(len(all_articles), 30))
+
+    categories = models.ArticleCategory.objects.annotate(article_count=Count('articles'))
 
     context = {
         'user_count': user_count,
         'article_count': article_count,
         'random_articles': random_articles,
         'read_articles_count': read_articles_count,
-        'categories': categories
+        'user_read_articles': user_read_articles,
+        'user_liked_articles': user_liked_articles,
+        'categories': categories,
     }
-    
+
     return render(request, 'index.html', context)
 
 
@@ -54,9 +66,9 @@ def article_list(request):
     article_list = None
     if request.method == 'POST':
         article = request.POST['article']
-        article_list = models.Arcticle.objects.filter(title__icontains=article)
+        article_list = models.Article.objects.filter(title__icontains=article)
     else:
-        article_list = models.Arcticle.objects.all()
+        article_list = models.Article.objects.all()
 
     paginator = Paginator(article_list, 6)  # Show 6 articles per page
     page_number = request.GET.get('page')
@@ -71,14 +83,14 @@ def article_list(request):
     return render(request, 'article.html', context)
 
 def article_by_category(request, category_id):
-    articles= models.Arcticle.objects.filter(category_id=category_id)
+    articles= models.Article.objects.filter(category_id=category_id)
     categories = models.ArticleCategory.objects.all()
     context = {'article_list': articles, 'categories': categories}
     return render(request, 'article.html', context)
     
 @login_required
 def liked(request, article_id):
-    article = models.Arcticle.objects.filter(id=article_id).first()
+    article = models.Article.objects.filter(id=article_id).first()
     if not article:
         return redirect('error')
 
@@ -105,13 +117,13 @@ def about1(request):
 def search_article(request):
     if request.method == 'POST':
         article = request.POST['makala']
-        articles = models.Arcticle.objects.filter(title__icontains=article)
+        articles = models.Article.objects.filter(title__icontains=article)
         categories = models.ArticleCategory.objects.all()
         context = {'article_list': articles, 'categories': categories}
         return render(request,'article.html', context)
 
 def article_detail(request, article_id):
-    article = models.Arcticle.objects.filter(id=article_id).first()
+    article = models.Article.objects.filter(id=article_id).first()
     if not article:
         raise Http404("Статья не найдена")
 
@@ -146,7 +158,7 @@ def article_detail(request, article_id):
 @login_required
 def article_comment(request, article_id):
     if request.method == 'POST':
-        article = models.Arcticle.objects.filter(id=article_id).first()
+        article = models.Article.objects.filter(id=article_id).first()
         user = request.user
         comment = request.POST['comment']
         models.Article_comment.objects.create(article_comment=article, user=user, comment=comment)
@@ -177,7 +189,7 @@ def about(request):
 
 def profile(request):
      # Фильтруем статьи по имени пользователя
-    articles = models.Arcticle.objects.filter(user_name__icontains=request.user.username)
+    articles = models.Article.objects.filter(user_name__icontains=request.user.username)
     
     # Создаем пагинатор: например, 6 статей на странице
     paginator = Paginator(articles, 6)  # Показываем по 6 статей на странице

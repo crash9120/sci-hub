@@ -15,12 +15,12 @@ class ArticleCategory(models.Model):
         db_table = 'article_categories'
 
 
-class Arcticle(models.Model):
+class Article(models.Model):
     title = models.TextField(max_length=200)
     file = models.FileField(upload_to='documents/',max_length=200)
     img = models.ImageField(upload_to='images/',default='images\Cybersecurity.png', blank=True, null=True)
     description = RichTextField(blank=True, null=True)
-    category = models.ForeignKey(ArticleCategory, on_delete=models.CASCADE)
+    category = models.ForeignKey(ArticleCategory, on_delete=models.CASCADE,related_name='articles')
     date_created = models.DateTimeField(auto_now_add=True)
     user_name = models.CharField(max_length=200,default='Admin',blank=True, null=True)
     likes = models.IntegerField(default=0)
@@ -42,7 +42,7 @@ class Arcticle(models.Model):
         db_table = 'articles'
 
 class Article_read(models.Model):
-    article_read = models.ForeignKey(Arcticle, on_delete=models.CASCADE)
+    article_read = models.ForeignKey(Article, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     date_read = models.DateTimeField(auto_now_add=True)
 
@@ -57,7 +57,7 @@ class Article_read(models.Model):
         unique_together = ('user', 'article_read')
 
 class Article_like(models.Model):
-    article_like = models.ForeignKey(Arcticle, on_delete=models.CASCADE)
+    article_like = models.ForeignKey(Article, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     date_like = models.DateTimeField(auto_now_add=True)
     
@@ -70,7 +70,7 @@ class Article_like(models.Model):
         db_table = 'article_likes'
 
 class Article_comment(models.Model):
-    article_comment = models.ForeignKey(Arcticle, on_delete=models.CASCADE)
+    article_comment = models.ForeignKey(Article, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     comment = RichTextField(blank=True, null=True)
     date_comment = models.DateTimeField(auto_now_add=True)
