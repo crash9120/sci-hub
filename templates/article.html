@@ -34,20 +34,173 @@
 								<div class="input-group">
 									<form action="{% url 'search_article' %}" method="post">
 										{% csrf_token %}
-										<label>Makala gözleg</label>
-										<input name="makala" type="text" required class="form-control">
+										<!-- <label>Makala gözleg</label> -->
+										<div class="relative">
+											<input name="makala" type="text" required class="form-control" placeholder=" Makala adyny ýazyň...">
+											<button type="submit" class="search-btn">
+												<i class="fa fa-search"></i>
+											</button>
+										</div>
 									</form>
 								</div>
 							</div>
 						</div>
+						
 						<div class="widget widget_archive">
 							<h5 class="widget-title style-1">Kategoriýalar</h5>
 							<ul>
 								{% for category in categories %}
-								<li><a href="{% url 'article' category.id %}">{{ category.name }}</a></li>
+								<li>
+									<a href="{% url 'article' category.id %}" class="category-link">
+										<span class="category-name">{{ category.name }}</span>
+										<span class="category-count">{{ category.article_count }}</span>
+									</a>
+								</li>
+								{% empty %}
+								<li>Kategoriýalar ýok</li>
 								{% endfor %}
 							</ul>
 						</div>
+						
+						<style>
+							/* Search Widget */
+							.widget.courses-search-bx {
+								background-color: #fff;
+								padding: 20px;
+								border-radius: 8px;
+								box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+								margin-bottom: 30px;
+							}
+						
+							.form-group label {
+								display: block;
+								font-size: 16px;
+								font-weight: 600;
+								color: #333;
+								margin-bottom: 8px;
+							}
+						
+							.input-group {
+								position: relative;
+							}
+						
+							.form-control {
+								width: 100%;
+								padding: 10px 40px 10px 15px;
+								border: 1px solid #ddd;
+								border-radius: 6px;
+								font-size: 14px;
+								color: #333;
+								outline: none;
+								transition: border-color 0.3s ease;
+							}
+						
+							.form-control:focus {
+								border-color: #3b82f6;
+								box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+							}
+						
+							.form-control::placeholder {
+								color: #999;
+							}
+						
+							.search-btn {
+								position: absolute;
+								right: 10px;
+								top: 50%;
+								transform: translateY(-50%);
+								background: none;
+								border: none;
+								color: #3b82f6;
+								font-size: 16px;
+								cursor: pointer;
+								padding: 5px;
+								transition: color 0.3s ease;
+							}
+						
+							.search-btn:hover {
+								color: #2563eb;
+							}
+						
+							/* Categories Widget */
+							.widget.widget_archive {
+								background-color: #fff;
+								padding: 20px;
+								border-radius: 8px;
+								box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+								margin-bottom: 30px;
+							}
+						
+							.widget-title {
+								font-size: 20px;
+								font-weight: 600;
+								color: #333;
+								margin-bottom: 15px;
+							}
+						
+							.widget_archive ul {
+								list-style: none;
+								padding: 0;
+								margin: 0;
+							}
+						
+							.widget_archive li {
+								margin-bottom: 10px;
+							}
+						
+							.category-link {
+								display: flex;
+								justify-content: space-between;
+								align-items: center;
+								padding: 10px 15px;
+								background-color: #f9fafb;
+								border-radius: 6px;
+								text-decoration: none;
+								color: #333;
+								font-size: 14px;
+								transition: background-color 0.3s ease, color 0.3s ease;
+							}
+						
+							.category-link:hover {
+								background-color: #e0f2fe;
+								color: #3b82f6;
+							}
+						
+							.category-name {
+								font-weight: 500;
+							}
+						
+							.category-count {
+								background-color: #e0f2fe;
+								color: #3b82f6;
+								font-size: 12px;
+								font-weight: 600;
+								padding: 3px 8px;
+								border-radius: 12px;
+							}
+						
+							/* Responsive */
+							@media (max-width: 768px) {
+								.widget.courses-search-bx,
+								.widget.widget_archive {
+									padding: 15px;
+								}
+						
+								.widget-title {
+									font-size: 18px;
+								}
+						
+								.form-control {
+									font-size: 13px;
+									padding: 8px 40px 8px 12px;
+								}
+						
+								.category-link {
+									font-size: 13px;
+									padding: 8px 12px;
+								}
+							}
+						</style>
 						<div class="widget">
 							<a href="#"><img src="assets/images/adv/adv.jpg" alt="" /></a>
 						</div>

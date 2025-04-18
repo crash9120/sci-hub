@@ -2,24 +2,25 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="description" content="Makalalar" />
-	<link rel="icon" href="{% static 'assets/images/favicon.ico' %}" type="image/x-icon" />
-	<link rel="shortcut icon" type="image/x-icon" href="{% static 'assets/images/favicon.png' %}" />
-	<title>Makalalar</title>
-	<meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="Makalalar" />
+    <link rel="icon" href="{% static 'assets/images/favicon.ico' %}" type="image/x-icon" />
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'assets/images/favicon.png' %}" />
+    <title>Makalalar</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-	<link rel="stylesheet" type="text/css" href="{% static 'assets/css/assets.css' %}">
-	<link rel="stylesheet" type="text/css" href="{% static 'assets/css/typography.css' %}">
-	<link rel="stylesheet" type="text/css" href="{% static 'assets/css/shortcodes/shortcodes.css' %}">
-	<link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}">
-	<link rel="stylesheet" type="text/css" href="{% static 'assets/vendors/revolution/css/layers.css' %}">
-	<link rel="stylesheet" type="text/css" href="{% static 'assets/vendors/revolution/css/settings.css' %}">
-	<link rel="stylesheet" type="text/css" href="{% static 'assets/vendors/revolution/css/navigation.css' %}">
-	<link rel="stylesheet" type="text/css" href="{% static 'assets/css/fontawesome.css' %}">
-	<link rel="stylesheet" type="text/css" href="{% static 'assets/css/all.css' %}">
-	<link rel="stylesheet" type="text/css" href="{% static 'assets/css/color/color-1.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/assets.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/footer.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/typography.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/shortcodes/shortcodes.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/vendors/revolution/css/layers.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/vendors/revolution/css/settings.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/vendors/revolution/css/navigation.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/fontawesome.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/all.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/color/color-1.css' %}">
 </head>
 <body id="bg">
 <div class="page-wraper">
@@ -27,115 +28,443 @@
 
 <!-- Header Top ==== -->
 <header class="header rs-nav">
-	<div class="top-bar">
-		<div class="container">
-			<div class="row d-flex justify-content-between">
-				<div class="topbar-left">
-					<ul class="d-flex align-items-center gap-3">
-						<li class="menu-logo">
-							<a href="{% url 'index' %}">
-								<img src="{% static 'assets/images/favicon.png' %}" alt="Logo" style="height: 40px;">
-							</a>
-						</li>
-						<li><a href="{% url 'contact' %}"><i class="fa fa-question-circle"></i> Habar ugratmak</a></li>
-						<li class="fw-bolder" style="font-size:16px;">{{ request.user.first_name }} {{ request.user.last_name }}</li>
-					</ul>
-				</div>
-				<div class="topbar-right">
-					<ul class="d-flex align-items-center gap-4">
+    <div class="top-bar">
+        <div class="container-fluid">
+            <div class="row d-flex align-items-center">
+                <!-- Left: Logo and Text -->
+                <div class="col-6 col-md-4 d-flex align-items-center">
+                    <div class="menu-logo">
+                        <a href="{% url 'index' %}">
+                            <img src="{% static 'assets/images/loading.gif' %}" alt="Logo" class="logo-img">
+                        </a>
+                    </div>
+                    <div class="header-text ms-3">
+                        <span class="typewriter-text">Ulgamdaky Makalalar Bilen Tanşyp Ýa-Da Öz Makalalaryňyzy Ýerleşdirip Bilersiňiz.</span>
+                    </div>
+                </div>
+
+                <!-- Right: Navigation -->
+                <div class="col-6 col-md-8 d-flex justify-content-end align-items-center">
+                    <ul class="nav-links d-flex align-items-center gap-3">
+                        <li>
+                            <a href="{% url 'index' %}" class="nav-link">
+                                <i class="fa fa-home"></i>
+                                <span class="ms-2">Home</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'contact' %}" class="nav-link">
+                                <i class="fa fa-info-circle"></i>
+                                <span class="ms-2">Habarlaş</span>
+                            </a>
+                        </li>
 						{% if request.user.username %}
-							<li>
-								<a href="{% url 'profile' %}" class="d-flex align-items-center">
-									<img src="{% static 'assets/images/profile.png' %}" alt="Profile" style="height: 30px; border-radius: 50%; margin-right: 5px;">
-									Profil
-								</a>
-							</li>
-							<li>
-								<a href="{% url 'logout' %}" class="d-flex align-items-center">
-									<img src="{% static 'assets/images/logout.jpg' %}" alt="Logout" style="height: 24px; margin-right: 5px;">
-									Çykyş
-								</a>
-							</li>
-						{% else %}
-							<li>
-								<a href="{% url 'login' %}" class="d-flex align-items-center">
-									<img src="{% static 'assets/images/login.png' %}" alt="Login" style="height: 24px; margin-right: 5px;">
-									Login
-								</a>
-							</li>
-							<li>
-								<a href="{% url 'register' %}" class="d-flex align-items-center">
-									<img src="{% static 'assets/images/register.png' %}" alt="Register" style="height: 24px; margin-right: 5px;">
-									Register
-								</a>
-							</li>
+                        <li>
+                            <a href="{% url 'profile' %}" class="nav-link">
+                                <i class="fa fa-user"></i>
+                                <span class="ms-2">Profil</span>
+                            </a>
+                        </li>
 						{% endif %}
-					</ul>
-				</div>
-			</div>
-		</div>
-	</div>
+                        {% if request.user.username %}
+                            <li>
+                                <a href="{% url 'logout' %}" class="nav-link logout-btn">
+                                    <i class="fa fa-sign-out-alt"></i>
+                                    <span class="ms-2">Çykyş</span>
+                                </a>
+                            </li>
+                        {% else %}
+                            <li>
+                                <a href="{% url 'login' %}" class="nav-link login-btn">
+                                    <i class="fa fa-sign-in-alt"></i>
+                                    <span class="ms-2">Login</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'register' %}" class="nav-link register-btn">
+                                    <i class="fa fa-user-plus"></i>
+                                    <span class="ms-2">Register</span>
+                                </a>
+                            </li>
+                        {% endif %}
+                        <!-- Hamburger Menu Button -->
+                        <li class="menu-toggle d-md-none">
+                            <i class="fa fa-bars"></i>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu d-md-none">
+        <ul class="mobile-nav-links">
+            <li>
+                <a href="{% url 'index' %}" class="nav-link">
+                    <i class="fa fa-home me-2"></i>Home
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'contact' %}" class="nav-link">
+                    <i class="fa fa-info-circle me-2"></i>Barada
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'profile' %}" class="nav-link">
+                    <i class="fa fa-user me-2"></i>Profil
+                </a>
+            </li>
+            {% if request.user.username %}
+                <li>
+                    <a href="{% url 'logout' %}" class="nav-link logout-btn">
+                        <i class="fa fa-sign-out-alt me-2"></i>Çykyş
+                    </a>
+                </li>
+            {% else %}
+                <li>
+                    <a href="{% url 'login' %}" class="nav-link login-btn">
+                        <i class="fa fa-sign-in-alt me-2"></i>Login
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'register' %}" class="nav-link register-btn">
+                        <i class="fa fa-user-plus me-2"></i>Register
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </div>
+
+    <style>
+        /* Header Styles */
+        .header.rs-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            background: #1a3c34 !important;
+            background: linear-gradient(90deg, #0c52eb, #0eeb58); /* Градиентный фон */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        /* Wave Animation for Background */
+        .header.rs-nav::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            clip-path: ellipse(150% 50% at 50% 0%);
+            animation: wave 5s infinite ease-in-out;
+            z-index: -1;
+        }
+
+        @keyframes wave {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(10px); }
+            100% { transform: translateY(0); }
+        }
+
+        .top-bar {
+            padding: 15px 0;
+        }
+
+        /* Logo Animation */
+        .menu-logo .logo-img {
+            height: 50px;
+            width: 40px;
+            animation: pulse 2s infinite ease-in-out;
+            transition: transform 0.3s ease;
+        }
+        .menu-logo .logo-img:hover {
+            transform: scale(1.1) rotate(5deg);
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.7));
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* Header Text with Typewriter Effect */
+        .header-text span {
+            color: #1a2526;
+            font-family: 'Georgia', serif;
+            font-size: 16px;
+            font-weight: 400;
+            position: relative;
+            display: inline-block;
+            overflow: hidden;
+            white-space: nowrap;
+            border-right: 2px solid #1a2526;
+            animation: typewriter 4s steps(40) 1s 1 normal both,
+                      blink 0.75s step-end infinite;
+        }
+        .header-text span::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: #f5e0a0;
+            transform: scaleX(0);
+            transform-origin: bottom left;
+            animation: underline 1s ease-in-out 5s forwards;
+        }
+        @keyframes typewriter {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+        @keyframes blink {
+            from, to { border-color: transparent; }
+            50% { border-color: #1a2526; }
+        }
+        @keyframes underline {
+            to { transform: scaleX(1); }
+        }
+
+        /* Navigation Links */
+        .nav-links {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        .nav-link {
+            color: #1a2526;
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            font-size: 16px;
+            font-weight: 500;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-3px);
+        }
+        .nav-link i {
+            font-size: 18px;
+            margin-right: 8px;
+            transition: transform 0.3s ease, color 0.3s ease;
+        }
+        .nav-link:hover i {
+            transform: rotate(10deg) scale(1.1);
+        }
+
+        /* Specific Link Styles */
+        .nav-link:hover { color: #f5e0a0; }
+        .nav-link:hover i { color: #f5e0a0; }
+        .logout-btn { color: #f28b82; }
+        .logout-btn:hover { color: #f07167; }
+        .logout-btn i { color: #f28b82; }
+        .logout-btn:hover i { color: #f07167; }
+        .login-btn { color: #a7e8bd; }
+        .login-btn:hover { color: #8ce0a6; }
+        .login-btn i { color: #a7e8bd; }
+        .login-btn:hover i { color: #8ce0a6; }
+        .register-btn { color: #f5e0a0; }
+        .register-btn:hover { color: #f0d47e; }
+        .register-btn i { color: #f5e0a0; }
+        .register-btn:hover i { color: #f0d47e; }
+
+        /* Hamburger Menu */
+        .menu-toggle {
+            color: #1a2526;
+            font-size: 24px;
+            cursor: pointer;
+            transition: transform 0.3s ease, color 0.3s ease;
+        }
+        .menu-toggle:hover {
+            color: #f5e0a0;
+            transform: scale(1.1);
+        }
+
+        /* Mobile Menu */
+        .mobile-menu {
+            display: none;
+            background: linear-gradient(90deg, #a3bffa, #a7e8bd);
+            padding: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            transform: translateY(-100%);
+            transition: transform 0.5s ease-in-out;
+        }
+        .mobile-menu.active {
+            display: block;
+            transform: translateY(0);
+        }
+        .mobile-nav-links {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        .mobile-nav-links li {
+            margin: 15px 0;
+            opacity: 0;
+            transform: translateX(-20px);
+            animation: slideIn 0.5s forwards;
+            animation-delay: calc(0.1s * var(--i));
+        }
+        .mobile-nav-links li:nth-child(1) { --i: 1; }
+        .mobile-nav-links li:nth-child(2) { --i: 2; }
+        .mobile-nav-links li:nth-child(3) { --i: 3; }
+        .mobile-nav-links li:nth-child(4) { --i: 4; }
+        .mobile-nav-links li:nth-child(5) { --i: 5; }
+        @keyframes slideIn {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        .mobile-nav-links .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+        .mobile-nav-links .nav-link:hover {
+            background: rgba(255, 255, 255, 0.3);
+            color: #f5e0a0;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 767px) {
+            .mobile-menu {
+                display: none;
+            }
+            .mobile-menu.active {
+                display: block;
+            }
+            .nav-links .d-none {
+                display: block !important;
+            }
+            .menu-toggle {
+                display: block !important;
+            }
+            .header-text span {
+                font-size: 14px;
+            }
+            .menu-logo .logo-img {
+                height: 40px;
+                width: 32px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .menu-toggle {
+                display: none !important;
+            }
+            .mobile-menu {
+                display: none !important;
+            }
+        }
+    </style>
+
+    <script>
+        // Hamburger Menu Handler
+        $(document).ready(function() {
+            $('.menu-toggle').on('click', function() {
+                $('.mobile-menu').toggleClass('active');
+                $(this).find('i').toggleClass('fa-bars fa-times');
+            });
+
+            // Hover Animation for Icons
+            $('.nav-link').on('mouseenter', function() {
+                $(this).find('i').css({
+                    'transform': 'rotate(10deg) scale(1.1)',
+                    'opacity': '0.9'
+                });
+            }).on('mouseleave', function() {
+                $(this).find('i').css({
+                    'transform': 'rotate(0deg) scale(1)',
+                    'opacity': '1'
+                });
+            });
+        });
+    </script>
 </header>
 <!-- Header END ==== -->
 
 {% block content %}
 {% endblock content %}
 
-<!-- Footer ==== -->
-<footer>
-	<div class="footer-top">
-		<div class="pt-exebar"></div>
-		<div class="container">
-			<div class="row">
-				<div class="col-lg-4 col-md-12 col-sm-12 footer-col-4">
-					<div class="widget">
-						<h5 class="footer-title">Sci-Hub</h5>
-						<p class="text-capitalize m-b20">Ulgamdaky makalalar bilen tanşyp ýa-da öz makalaňyzy ýerleşdirip bilersiňiz.</p>
-					</div>
-				</div>
-				<div class="col-12 col-lg-5 col-md-7 col-sm-12">
-					<div class="row">
-						<div class="col-4 col-lg-4 col-md-4 col-sm-4">
-							<div class="widget footer_widget">
-								<h5 class="footer-title">Company</h5>
-								<ul>
-									<li><a href="{% url 'article' %}">Home</a></li>
-									<li><a href="{% url 'about' %}">Barada</a></li>
-								</ul>
-							</div>
-						</div>
-						<div class="col-4 col-lg-4 col-md-4 col-sm-4">
-							<div class="widget footer_widget">
-								<h5 class="footer-title">Get In Touch</h5>
-								<ul>
-									<li><a href="http://educhamp.themetrades.com/admin/index.html">Dashboard</a></li>
-								</ul>
-							</div>
-						</div>
-						<div class="col-4 col-lg-4 col-md-4 col-sm-4">
-							<div class="widget footer_widget">
-								<h5 class="footer-title">Courses</h5>
-								<ul>
-									<li><a href="{% url 'profile' %}">Profil</a></li>
-								</ul>
-							</div>
-						</div>
-					</div>
-				</div>	
-			</div>
-		</div>
-	</div>
-	<div class="footer-bottom">
-		<div class="container">
-			<div class="row">
-				<div class="col-lg-12 col-md-12 col-sm-12 text-center">
-					<a href="{% url 'index' %}" class="mx-2 h5" style="font-weight:bolder">Sci-hub</a> Created by Hasanow Azat
-				</div>
-			</div>
-		</div>
-	</div>
+<!-- Footer -->
+<footer class="site-footer">
+    <div class="footer-top">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 col-lg-4 col-md-4 col-sm-4 footer-col-4">
+                    <div class="widget">
+                        <div class="menu-logo">
+                            <a href="{% url 'index' %}">
+                                <img src="{% static 'assets/images/loading.gif' %}" alt="Logo" class="logo-img">
+                            </a>
+                        </div>
+                        <h5 class="footer-title">Makalalar</h5>
+                        <p class="text-capitalize m-b20">Ulgamdaky Makalalar Bilen Tanşyp Ýa-da Öz Makalaňyzy Ýerleşdirip Bilersiňiz.</p>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-8 col-md-8 col-sm-8">
+                    <div class="row">
+                        <div class="col-4 col-lg-4 col-md-4 col-sm-4">
+                            <div class="widget footer_widget">
+                                <h5 class="footer-title">Navigation</h5>
+                                <ul>
+                                    <li><a href="{% url 'index' %}">Home</a></li>
+                                    <li><a href="{% url 'contact' %}">Teklipler we ýüz tutmalar üçin</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-4 col-lg-4 col-md-4 col-sm-4">
+                            <div class="widget footer_widget">
+                                <h5 class="footer-title">Get In Touch</h5>
+                                <ul>
+                                    <li><a href="tel:+000123456789">+993 63 46 31 36</a></li>
+                                    <li><a href="mailto:crash9120@gmail.com">crash9120@gmail.com</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-4 col-lg-4 col-md-4 col-sm-4">
+                            <div class="widget footer_widget">
+                                <h5 class="footer-title">Account</h5>
+                                <ul>
+                                    {% if request.user.is_authenticated %}
+                                        <li><a href="{% url 'profile' %}">Profil</a></li>
+                                        <li><a href="{% url 'logout' %}">Çykyş</a></li>
+                                    {% else %}
+                                        <li><a href="{% url 'login' %}">Login</a></li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <p><a href="{% url 'index' %}">Makalalar</a> | Created by Hasanow Azat © 2025</p>
+                </div>
+            </div>
+        </div>
+    </div>
 </footer>
-<!-- Footer END ==== -->
+    <!-- Footer END -->
+
 
 <button class="back-to-top fa fa-chevron-up"></button>
 

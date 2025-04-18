@@ -1,0 +1,161 @@
+/* Footer Styles - Изолированные от других CSS */
+.site-footer {
+    background-color: #1a1a1a !important;
+    color: #fff !important;
+    padding: 40px 0 0 !important;
+    font-family: Helvetica, Arial, sans-serif !important;
+    margin: 0 !important;
+    border: none !important;
+}
+
+.site-footer * {
+    font-family: Helvetica, Arial, sans-serif !important;
+}
+
+.site-footer .footer-top {
+    background: none !important;
+    padding: 0 !important;
+}
+
+.site-footer .footer-top .container {
+    max-width: 1200px !important;
+    margin: 0 auto !important;
+    padding: 0 15px !important;
+}
+
+.site-footer .menu-logo {
+    margin-bottom: 20px !important;
+}
+
+.site-footer .menu-logo .logo-img {
+    height: 50px !important;
+    width: 40px !important;
+    animation: pulse 2s infinite ease-in-out !important;
+    transition: transform 0.3s ease !important;
+}
+
+.site-footer .menu-logo .logo-img:hover {
+    transform: scale(1.1) rotate(5deg) !important;
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.7)) !important;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.site-footer .footer-title {
+    font-size: 18px !important;
+    font-weight: bold !important;
+    margin-bottom: 20px !important;
+    color: #fff !important;
+    padding: 0 !important;
+    border: none !important;
+}
+
+.site-footer .widget {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.site-footer .widget p {
+    font-size: 14px !important;
+    line-height: 1.6 !important;
+    color: #ccc !important;
+    margin: 0 0 20px 0 !important;
+}
+
+.site-footer .footer_widget ul {
+    list-style: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.site-footer .footer_widget ul li {
+    margin-bottom: 10px !important;
+    padding: 0 !important;
+    border: none !important;
+}
+
+.site-footer .footer_widget ul li a {
+    color: #ccc !important;
+    text-decoration: none !important;
+    font-size: 14px !important;
+    transition: color 0.3s ease !important;
+    background: none !important;
+    padding: 0 !important;
+}
+
+.site-footer .footer_widget ul li a:hover {
+    color: #f5e0a0 !important;
+}
+
+.site-footer .footer-bottom {
+    background-color: #111 !important;
+    padding: 20px 0 !important;
+    margin-top: 40px !important;
+    border: none !important;
+}
+
+.site-footer .footer-bottom p {
+    margin: 0 !important;
+    font-size: 14px !important;
+    color: #ccc !important;
+    text-align: center !important;
+}
+
+.site-footer .footer-bottom a {
+    color: #f5e0a0 !important;
+    text-decoration: none !important;
+    font-weight: bold !important;
+}
+
+.site-footer .footer-bottom a:hover {
+    color: #fff !important;
+}
+
+.site-footer .row {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    margin: 0 -15px !important;
+}
+
+.site-footer .col-4, 
+.site-footer .col-lg-4, 
+.site-footer .col-md-4, 
+.site-footer .col-sm-4,
+.site-footer .col-12, 
+.site-footer .col-lg-8, 
+.site-footer .col-md-8, 
+.site-footer .col-sm-8 {
+    padding: 0 15px !important;
+    margin: 0 !important;
+}
+
+@media (max-width: 767px) {
+    .site-footer .footer-top .row {
+        flex-direction: column !important;
+        text-align: center !important;
+    }
+    .site-footer .col-4, 
+    .site-footer .col-lg-4, 
+    .site-footer .col-md-4, 
+    .site-footer .col-sm-4,
+    .site-footer .col-12, 
+    .site-footer .col-lg-8, 
+    .site-footer .col-md-8, 
+    .site-footer .col-sm-8 {
+        margin-bottom: 30px !important;
+        max-width: 100% !important;
+        flex: 0 0 100% !important;
+    }
+    .site-footer .widget p {
+        margin-left: auto !important;
+        margin-right: auto !important;
+        max-width: 90% !important;
+    }
+    .site-footer .menu-logo {
+        margin: 0 auto 20px !important;
+    }
+}

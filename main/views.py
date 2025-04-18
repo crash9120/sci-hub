@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from . import models
+from django.http import JsonResponse
 from django.http import Http404, HttpResponseRedirect, HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -83,27 +84,36 @@ def article_list(request):
     return render(request, 'article.html', context)
 
 def article_by_category(request, category_id):
-    articles= models.Article.objects.filter(category_id=category_id)
-    categories = models.ArticleCategory.objects.all()
-    context = {'article_list': articles, 'categories': categories}
+    articles = models.Article.objects.filter(category_id=category_id)
+   
+    categories = models.ArticleCategory.objects.annotate(article_count=Count('articles'))
+    
+    # Настройка пагинации
+    paginator = Paginator(articles, 6)  # 9 статей на страницу
+    page_number = request.GET.get('page')  # Получаем номер страницы из запроса
+    page_obj = paginator.get_page(page_number)  # Получаем объект страницы
+    
+    context = {
+        'article_list': page_obj,  # Передаём объект страницы вместо списка статей
+        'categories': categories
+    }
     return render(request, 'article.html', context)
     
 @login_required
 def liked(request, article_id):
-    article = models.Article.objects.filter(id=article_id).first()
-    if not article:
-        return redirect('error')
-
-    user = request.user
-    like = models.Article_like.objects.filter(article_like=article, user=user).first()
-
-    if like:
-        like.delete()  # Если лайк уже есть, удаляем его (дизлайк)
-    else:
-        models.Article_like.objects.create(article_like=article, user=user)
-
-    return redirect('article_detail', article_id=article_id)
-
+     article = models.Article.objects.filter(id=article_id).first()
+     if not article:
+         return redirect('error')
+ 
+     user = request.user
+     like = models.Article_like.objects.filter(article_like=article, user=user).first()
+ 
+     if like:
+         like.delete()  # Если лайк уже есть, удаляем его (дизлайк)
+     else:
+         models.Article_like.objects.create(article_like=article, user=user)
+ 
+     return redirect('article_detail', article_id=article_id)
   
 def go_to_login(request):   
     return render(request, 'login_required.html')
@@ -141,15 +151,20 @@ def article_detail(request, article_id):
             read_articles_count = models.Article_read.objects.filter(user=request.user).count()
         else:
             read_articles_count = models.Article_read.objects.filter(user=request.user).count()
+        
+        # Проверяем, лайкнул ли пользователь статью
+        is_liked = models.Article_like.objects.filter(article_like=article, user=request.user).exists()
     else:
         read_articles_count = 0  # Для анонимных пользователей счётчик 0
+        is_liked = False  # Анонимные пользователи не могут лайкать
 
     article_comments = models.Article_comment.objects.filter(article_comment__id=article_id)
     context = {
         'article': article,
         'article_id': article_id,
         'article_comments': article_comments,
-        'read_articles_count': read_articles_count  # Передаем количество прочитанных статей в контекст
+        'read_articles_count': read_articles_count,
+        'is_liked': is_liked  # Добавляем переменную is_liked в контекст
     }
     
     return render(request, 'article_detail.html', context)
