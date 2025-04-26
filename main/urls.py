@@ -18,7 +18,11 @@ urlpatterns = [
     path('base/', views.base, name='base'),
     path('about1/', views.about1, name='about_new'),
     path('register/', views.register, name='register'),
-    path('article/category/<int:category_id>/', views.article_by_category, name='article_by_category')
+    path('article/category/<int:category_id>/', views.article_by_category, name='article_by_category'),
+    path('admin-advantages/', views.admin_advantages, name='admin_advantages'),
+    path('add-articles/', views.admin_advantages, name='add_articles'),
+    path('download/', views.download_file, name='download_file'),
+    
 
     
 ]

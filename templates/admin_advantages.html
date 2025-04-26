@@ -1,0 +1,517 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="content-inner">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <h2 class="section-title">Admin Artykmaçlyklary</h2>
+                <p class="lead">Admin hökmünde, siz platformany netijeli dolandyrmak üçin aýratyn hukuklara we mümkinçiliklere eýe bolup bilersiňiz.</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <div class="feature-box">
+                    <i class="fa fa-file-upload fa-2x text-primary"></i>
+                    <h5>Makala Goşmak</h5>
+                    <p>Birbada birnäçe makalalary Admin ulanyjynyň adyndan goşmak mümkinçiligi.</p>
+                    <form method="POST" action="{% url 'admin_advantages' %}" enctype="multipart/form-data" id="add-articles-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="add_articles" value="1">
+                        <div class="form-group">
+                            <label for="category">Kategoriýa:</label>
+                            <select name="category" id="category" class="form-control" required>
+                                <option value="" disabled selected>-- Kategoriýa Saýlaň --</option>
+                                {% for cat in categories %}
+                                    <option value="{{ cat.id }}">{{ cat.name }}</option>
+                                {% endfor %}
+                            </select>
+                            <small id="selected-category" class="form-text text-muted"></small>
+                        </div>
+                        <div class="form-group">
+                            <label for="files">Выберите PDF-файлы:</label>
+                            <input type="file" name="files" id="files" class="form-control" multiple accept=".pdf" required>
+                            <small id="file-count" class="form-text text-muted"></small>
+                        </div>
+                        <button type="submit" class="btn btn-primary" id="submit-btn">Добавить статьи</button>
+                        <div class="progress-container" id="add-progress-container" style="display: none;">
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar" id="add-progress-bar" style="width: 0%;"></div>
+                            </div>
+                            <small class="progress-info" id="add-progress-info">Обработка...</small>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="feature-box">
+                    <i class="fa fa-file-alt fa-2x text-primary"></i>
+                    <h5>Makalalary Kategoriýalaşdyrmak</h5>
+                    <p>Birnäçe ýüklenip alnan makalalary kategory boýunça takmynan kategoriýalara bölmek.</p>
+                    <form method="POST" action="{% url 'admin_advantages' %}" enctype="multipart/form-data" id="categorize-files-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="categorize_files" value="1">
+                        <div class="form-group">
+                            <label for="categorize_files">Выберите папку с PDF-файлами:</label>
+                            <input type="file" name="categorize_files" id="categorize_files" class="form-control" multiple accept=".pdf">
+                            <small id="categorize-file-count" class="form-text text-muted"></small>
+                        </div>
+                        <button type="submit" class="btn btn-primary" id="categorize-submit-btn">Категоризировать файлы</button>
+                        <div class="progress-container" id="categorize-progress-container" style="display: none;">
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar" id="categorize-progress-bar" style="width: 0%;"></div>
+                            </div>
+                            <small class="progress-info" id="categorize-progress-info">Обработка...</small>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="feature-box">
+                    <i class="fa fa-pencil-alt fa-2x text-primary"></i>
+                    <h5>Makalalaryň atlaryny çalyşmak</h5>
+                    <p>Makalalaryň metamaglumatlaryny peýdalanyp we OCR ulanmak arkaly makalalary hakyky atlaryna geçirmek.</p>
+                    <form method="POST" action="{% url 'admin_advantages' %}" enctype="multipart/form-data" id="rename-files-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="rename_files" value="1">
+                        <div class="form-group">
+                            <label for="rename_files">Выберите PDF-файлы для переименования:</label>
+                            <input type="file" name="rename_files" id="rename_files" class="form-control" multiple accept=".pdf" required>
+                            <small id="rename-file-count" class="form-text text-muted"></small>
+                        </div>
+                        <button type="submit" class="btn btn-primary" id="rename-submit-btn">Переименовать файлы</button>
+                        <div class="progress-container" id="rename-progress-container" style="display: none;">
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar" id="rename-progress-bar" style="width: 0%;"></div>
+                            </div>
+                            <small class="progress-info" id="rename-progress-info">Обработка...</small>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="feature-box">
+                    <i class="fa fa-cogs fa-2x text-primary"></i>
+                    <h5>Döredijilik funksiýasy</h5>
+                    <p>Bu funksiýa ýakynda goşular.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Модальное окно для уведомлений -->
+<div class="modal fade" id="notificationModal" tabindex="-1" role="dialog" aria-labelledby="notificationModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="notificationModalLabel">Сообщение</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body" id="notificationMessage">
+                <!-- Сообщение будет вставлено сюда -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f4f7fa;
+}
+
+.content-inner {
+    padding: 50px 0;
+}
+
+.section-title {
+    font-size: 36px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.section-title::after {
+    content: '';
+    width: 60px;
+    height: 4px;
+    background: #007bff;
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.lead {
+    font-size: 18px;
+    color: #666;
+    margin-bottom: 40px;
+}
+
+.feature-box {
+    background: #ffffff;
+    border-radius: 15px;
+    padding: 30px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0.1, 0.1, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin-bottom: 30px;
+}
+
+.feature-box:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+}
+
+.feature-box i {
+    color: #007bff;
+    margin-bottom: 20px;
+}
+
+.feature-box h5 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 15px;
+}
+
+.feature-box p {
+    font-size: 14px;
+    color: #777;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    background-color: #f9f9f9;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    font-size: 14px;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.2);
+}
+
+.btn-primary {
+    width: 100%;
+    background: linear-gradient(135deg, #000000, #0056b3);
+    border: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    color: white;
+    font-weight: 600;
+    font-size: 14px;
+    transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #0056b3, #003d82);
+    transform: translateY(-2px);
+}
+
+.btn-primary:disabled {
+    background: #cccccc;
+    cursor: not-allowed;
+}
+
+.form-text {
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+.form-text.text-muted {
+    color: #6c757d;
+}
+
+.form-text.text-error {
+    color: #dc3545;
+}
+
+.progress-container {
+    margin-top: 20px;
+}
+
+.progress {
+    height: 25px;
+    border-radius: 12px;
+    background-color: #e9ecef;
+    overflow: hidden;
+}
+
+.progress-bar {
+    background: linear-gradient(135deg, #007bff, #00c4b4);
+    font-weight: 600;
+    transition: width 0.5s ease;
+}
+
+.progress-info {
+    font-size: 14px;
+    color: #333;
+    margin-top: 10px;
+}
+
+.modal-content {
+    border-radius: 15px;
+    border: none;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+    background: #007bff;
+    color: white;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+}
+
+.modal-title {
+    font-weight: 600;
+}
+
+.modal-body {
+    white-space: pre-line;
+    font-size: 16px;
+    color: #333;
+    padding: 20px;
+}
+
+.modal-footer .btn-primary {
+    background: linear-gradient(135deg, #007bff, #0056b3);
+}
+
+.modal-footer .btn-primary:hover {
+    background: linear-gradient(135deg, #0056b3, #003d82);
+}
+
+input[type="file"] {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    background-color: #ffffff;
+    border: 2px dashed #007bff;
+    border-radius: 8px;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+input[type="file"]:hover {
+    background-color: #f0f8ff;
+    border-color: #0056b3;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Показываем модальное окно с уведомлением, если есть сообщение
+    {% if notification %}
+        document.getElementById('notificationMessage').innerText = '{{ notification.message|escapejs }}';
+        $('#notificationModal').modal('show');
+        {% if download_file %}
+            // Инициируем скачивание файла
+            const downloadLink = document.createElement('a');
+            downloadLink.href = '/download/?file={{ download_file|urlencode }}';
+            downloadLink.download = '{{ notification.message|escapejs }}'.includes('Категоризировано') ? 'categorized_files.zip' : 'renamed_files.zip';
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+        {% endif %}
+    {% endif %}
+
+    // Проверка статуса асинхронной задачи (для категоризации и переименования)
+    {% if task_id %}
+        function checkTaskStatus(taskId, progressBarId, progressInfoId, progressContainerId) {
+            fetch('/task-status/' + taskId + '/')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('notificationMessage').innerText = data.message;
+                    $('#notificationModal').modal('show');
+                    const progressBar = document.getElementById(progressBarId);
+                    const progressInfo = document.getElementById(progressInfoId);
+                    const progressContainer = document.getElementById(progressContainerId);
+                    progressContainer.style.display = 'block';
+                    if (data.status === 'SUCCESS') {
+                        progressBar.style.width = '100%';
+                        progressInfo.innerText = 'Обработка завершена';
+                        if (data.download_file) {
+                            const downloadLink = document.createElement('a');
+                            downloadLink.href = '/download/?file=' + encodeURIComponent(data.download_file);
+                            downloadLink.download = data.message.includes('Категоризировано') ? 'categorized_files.zip' : 'renamed_files.zip';
+                            document.body.appendChild(downloadLink);
+                            downloadLink.click();
+                            document.body.removeChild(downloadLink);
+                        }
+                    } else if (data.status === 'FAILURE') {
+                        progressBar.style.width = '0%';
+                        progressInfo.innerText = 'Ошибка при обработке';
+                        progressContainer.style.display = 'none';
+                    } else {
+                        // Имитация прогресса
+                        const currentWidth = parseInt(progressBar.style.width) || 0;
+                        progressBar.style.width = Math.min(currentWidth + 10, 90) + '%';
+                        progressInfo.innerText = 'Обработка... (' + currentWidth + '%)';
+                        setTimeout(() => checkTaskStatus(taskId, progressBarId, progressInfoId, progressContainerId), 2000);
+                    }
+                });
+        }
+        checkTaskStatus('{{ task_id }}', 'categorize-progress-bar', 'categorize-progress-info', 'categorize-progress-container');
+    {% endif %}
+
+    // Отображаем выбранную категорию под выпадающим списком
+    const categorySelect = document.getElementById('category');
+    const selectedCategoryText = document.getElementById('selected-category');
+    categorySelect.addEventListener('change', function() {
+        if (categorySelect.value !== '') {
+            const selectedOption = categorySelect.options[categorySelect.selectedIndex].text;
+            selectedCategoryText.innerText = `Выбрано: ${selectedOption}`;
+            selectedCategoryText.style.color = '#007bff';
+        } else {
+            selectedCategoryText.innerText = '';
+        }
+    });
+
+    // Ограничение количества файлов и прогресс для добавления статей
+    const fileInput = document.getElementById('files');
+    const fileCountText = document.getElementById('file-count');
+    const submitBtn = document.getElementById('submit-btn');
+    const addArticlesForm = document.getElementById('add-articles-form');
+    const addProgressContainer = document.getElementById('add-progress-container');
+    const addProgressBar = document.getElementById('add-progress-bar');
+    const addProgressInfo = document.getElementById('add-progress-info');
+    const maxFiles = 1000; // Ограничение до 1000 файлов
+
+    fileInput.addEventListener('change', function() {
+        const fileCount = fileInput.files.length;
+        if (fileCount > maxFiles) {
+            fileCountText.innerText = `Ошибка: Выбрано слишком много файлов (${fileCount}). Максимум: ${maxFiles}.`;
+            fileCountText.classList.remove('text-muted');
+            fileCountText.classList.add('text-error');
+            submitBtn.disabled = true;
+        } else {
+            fileCountText.innerText = `Выбрано файлов: ${fileCount}`;
+            fileCountText.classList.remove('text-error');
+            fileCountText.classList.add('text-muted');
+            submitBtn.disabled = false;
+        }
+    });
+
+    addArticlesForm.addEventListener('submit', function(e) {
+        const fileCount = fileInput.files.length;
+        if (fileCount > 0) {
+            addProgressContainer.style.display = 'block';
+            addProgressInfo.innerText = 'Загрузка файлов...';
+            // Имитация прогресса (для точного прогресса нужен WebSocket или серверный прогресс)
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 10;
+                addProgressBar.style.width = Math.min(progress, 90) + '%';
+                addProgressInfo.innerText = `Загрузка... (${progress}%)`;
+                if (progress >= 90) {
+                    clearInterval(interval);
+                }
+            }, 1000);
+        }
+    });
+
+    // Ограничение количества файлов и прогресс для категоризации
+    const categorizeFileInput = document.getElementById('categorize_files');
+    const categorizeFileCountText = document.getElementById('categorize-file-count');
+    const categorizeSubmitBtn = document.getElementById('categorize-submit-btn');
+    const categorizeForm = document.getElementById('categorize-files-form');
+    const categorizeProgressContainer = document.getElementById('categorize-progress-container');
+    const categorizeProgressBar = document.getElementById('categorize-progress-bar');
+    const categorizeProgressInfo = document.getElementById('categorize-progress-info');
+
+    categorizeFileInput.addEventListener('change', function() {
+        const fileCount = categorizeFileInput.files.length;
+        if (fileCount > maxFiles) {
+            categorizeFileCountText.innerText = `Ошибка: Выбрано слишком много файлов (${fileCount}). Максимум: ${maxFiles}.`;
+            categorizeFileCountText.classList.remove('text-muted');
+            categorizeFileCountText.classList.add('text-error');
+            categorizeSubmitBtn.disabled = true;
+        } else {
+            categorizeFileCountText.innerText = `Выбрано файлов: ${fileCount}`;
+            categorizeFileCountText.classList.remove('text-error');
+            categorizeFileCountText.classList.add('text-muted');
+            categorizeSubmitBtn.disabled = false;
+        }
+    });
+
+    categorizeForm.addEventListener('submit', function(e) {
+        const fileCount = categorizeFileInput.files.length;
+        if (fileCount > 0) {
+            categorizeProgressContainer.style.display = 'block';
+            categorizeProgressInfo.innerText = 'Загрузка файлов...';
+            // Имитация прогресса до начала асинхронной задачи
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 10;
+                categorizeProgressBar.style.width = Math.min(progress, 90) + '%';
+                categorizeProgressInfo.innerText = `Загрузка... (${progress}%)`;
+                if (progress >= 90) {
+                    clearInterval(interval);
+                }
+            }, 100);
+        }
+    });
+
+    // Ограничение количества файлов и прогресс для переименования
+    const renameFileInput = document.getElementById('rename_files');
+    const renameFileCountText = document.getElementById('rename-file-count');
+    const renameSubmitBtn = document.getElementById('rename-submit-btn');
+    const renameForm = document.getElementById('rename-files-form');
+    const renameProgressContainer = document.getElementById('rename-progress-container');
+    const renameProgressBar = document.getElementById('rename-progress-bar');
+    const renameProgressInfo = document.getElementById('rename-progress-info');
+
+    renameFileInput.addEventListener('change', function() {
+        const fileCount = renameFileInput.files.length;
+        if (fileCount > maxFiles) {
+            renameFileCountText.innerText = `Ошибка: Выбрано слишком много файлов (${fileCount}). Максимум: ${maxFiles}.`;
+            renameFileCountText.classList.remove('text-muted');
+            renameFileCountText.classList.add('text-error');
+            renameSubmitBtn.disabled = true;
+        } else {
+            renameFileCountText.innerText = `Выбрано файлов: ${fileCount}`;
+            renameFileCountText.classList.remove('text-error');
+            renameFileCountText.classList.add('text-muted');
+            renameSubmitBtn.disabled = false;
+        }
+    });
+
+    renameForm.addEventListener('submit', function(e) {
+        const fileCount = renameFileInput.files.length;
+        if (fileCount > 0) {
+            renameProgressContainer.style.display = 'block';
+            renameProgressInfo.innerText = 'Загрузка файлов...';
+            // Имитация прогресса до начала асинхронной задачи
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 10;
+                renameProgressBar.style.width = Math.min(progress, 90) + '%';
+                renameProgressInfo.innerText = `Загрузка... (${progress}%)`;
+                if (progress >= 90) {
+                    clearInterval(interval);
+                }
+            }, 100);
+        }
+    });
+});
+</script>
+{% endblock content %}

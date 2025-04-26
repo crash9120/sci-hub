@@ -1,9 +1,11 @@
-
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+TEMP_ZIP_DIR = os.path.join(BASE_DIR, 'temp_zips')
+if not os.path.exists(TEMP_ZIP_DIR):
+    os.makedirs(TEMP_ZIP_DIR)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
@@ -15,7 +17,6 @@ SECRET_KEY = 'django-insecure-*^mjp_qfgnyoqb%guse8#*9i3!5$jr76or%@tn)5nhsvio7k*(
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
-
 
 # Application definition
 
@@ -30,7 +31,6 @@ INSTALLED_APPS = [
     'main',
     'ckeditor',
     'account',
-    
 ]
 
 MIDDLEWARE = [
@@ -64,7 +64,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'makala.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
@@ -74,7 +73,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -94,7 +92,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
@@ -106,12 +103,8 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
-
-
-import os 
 
 STATIC_URL = 'static/'
 MEDIA_URL = 'media/'
@@ -128,3 +121,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # AUTH_USER_MODEL = 'account.CustomUser'
 LOGIN_URL = '/account/login/'
+
+# File upload settings
+DATA_UPLOAD_MAX_NUMBER_FILES = 5000  # Увеличиваем лимит до 5000 файлов
+DATA_UPLOAD_MAX_MEMORY_SIZE = 52428800  # Увеличиваем лимит размера данных до 50MB (50 * 1024 * 1024)
+FILE_UPLOAD_MAX_MEMORY_SIZE = 52428800  # Увеличиваем максимальный размер файла до 50MB

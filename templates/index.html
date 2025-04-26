@@ -547,7 +547,8 @@
                     <div class="item">
                         <div class="article-card">
                             <div class="article-img">
-                                <img src="{{ article.img.url }}" alt="{{ article.title }}">
+                                <a href="{% url 'article_detail' article.id %}"> <img src="{{ article.img.url }}" alt="{{ article.title }}" > </a>
+                               
                                 <a href="{% url 'article_detail' article.id %}" class="btn-read">Okamak</a>
                             </div>
                             <div class="article-info">
@@ -601,7 +602,8 @@
                         <div class="item">
                             <div class="article-card">
                                 <div class="article-img">
-                                    <img src="{{ article.img.url }}" alt="{{ article.title }}">
+                                    <a href="{% url 'article_detail' article.id %}"> <img src="{{ article.img.url }}" alt="{{ article.title }}"></a>
+                                    
                                     <a href="{% url 'article_detail' article.id %}" class="btn-read">Okamak</a>
                                 </div>
                                 <div class="article-info">

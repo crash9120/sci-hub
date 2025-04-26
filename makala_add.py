@@ -9,10 +9,10 @@ from main.models import Article, ArticleCategory
 from django.core.files import File
 
 # Укажите путь к папке с PDF-файлами
-pdf_folder = "C:\\Users\\212108\\Downloads\\sci_hub makala skacat etmek un skript\\sci_sckacat"
+pdf_folder = "C:\\Users\\212108\\Desktop\\scimag00000000-00000999\\10.1002\\medicine"
 
 # ID или экземпляр категории (замените на существующий ID категории)
-category = ArticleCategory.objects.first()  # или .get(id=1)
+category = ArticleCategory.objects.get(id=6)  # или .get(id=1)
 
 # Проверка, что категория существует
 if not category:

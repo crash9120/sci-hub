@@ -20,7 +20,7 @@ class ArticleCategory(models.Model):
 class Article(models.Model):
     title = models.TextField(max_length=200)
     file = models.FileField(upload_to='documents/',max_length=200)
-    img = models.ImageField(upload_to='images/',default='images\Cybersecurity.png', blank=True, null=True)
+    img = models.ImageField(upload_to='images/',default='images\\article.jpg', blank=True, null=True)
     description = RichTextField(blank=True, null=True)
     category = models.ForeignKey(ArticleCategory, on_delete=models.CASCADE,related_name='articles')
     date_created = models.DateTimeField(auto_now_add=True)
