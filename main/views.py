@@ -17,7 +17,7 @@ import re
 import pdfplumber
 import atexit
 import threading
-import fitz  # Добавляем PyMuPDF
+import fitz  # PyMuPDF
 import logging
 import zipfile
 import uuid
@@ -27,6 +27,7 @@ import csv
 import tempfile
 from crossref.restful import Works
 import warnings
+import mimetypes
 
 # Настройка логирования для отладки
 logging.basicConfig(level=logging.DEBUG)
@@ -42,7 +43,6 @@ def get_most_liked_articles(num_articles=5):
     
     article_ids = [item['article_like'] for item in most_liked_articles]
     most_liked_articles = Article.objects.filter(id__in=article_ids)
-
     return most_liked_articles
 
 def index(request):
@@ -52,11 +52,9 @@ def index(request):
     if is_auth:
         read_articles_qs = Article_read.objects.filter(user=user)
         liked_articles_qs = Article_like.objects.filter(user=user)
-
         read_articles_count = read_articles_qs.count()
         user_read_articles = read_articles_qs.values_list('article_read_id', flat=True)
         user_liked_articles = liked_articles_qs.values_list('article_like_id', flat=True)
-
         articles = Article.objects.filter(user_name__icontains=user.username)
     else:
         read_articles_count = 0
@@ -66,10 +64,8 @@ def index(request):
 
     user_count = User.objects.count()
     article_count = Article.objects.count()
-
     all_articles = list(Article.objects.all())
     random_articles = sample(all_articles, min(len(all_articles), 30))
-
     categories = ArticleCategory.objects.annotate(article_count=Count('articles'))
 
     context = {
@@ -81,7 +77,6 @@ def index(request):
         'user_liked_articles': user_liked_articles,
         'categories': categories,
     }
-
     return render(request, 'index.html', context)
 
 def article_list(request):
@@ -92,10 +87,9 @@ def article_list(request):
     else:
         article_list = Article.objects.all()
 
-    paginator = Paginator(article_list, 6)  # Show 6 articles per page
+    paginator = Paginator(article_list, 6)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-
     categories = ArticleCategory.objects.all()
 
     context = {
@@ -106,7 +100,6 @@ def article_list(request):
 
 def article_by_category(request, category_id):
     articles = Article.objects.filter(category_id=category_id)
-   
     categories = ArticleCategory.objects.annotate(article_count=Count('articles'))
     
     paginator = Paginator(articles, 6)
@@ -132,7 +125,6 @@ def liked(request, article_id):
         like.delete()
     else:
         Article_like.objects.create(article_like=article, user=user)
-
     return redirect('article_detail', article_id=article_id)
   
 def go_to_login(request):   
@@ -162,12 +154,7 @@ def article_detail(request, article_id):
 
     if request.user.is_authenticated:
         read_record, created = Article_read.objects.get_or_create(user=request.user, article_read=article)
-        
-        if created:
-            read_articles_count = Article_read.objects.filter(user=request.user).count()
-        else:
-            read_articles_count = Article_read.objects.filter(user=request.user).count()
-        
+        read_articles_count = Article_read.objects.filter(user=request.user).count()
         is_liked = Article_like.objects.filter(article_like=article, user=request.user).exists()
     else:
         read_articles_count = 0
@@ -181,7 +168,6 @@ def article_detail(request, article_id):
         'read_articles_count': read_articles_count,
         'is_liked': is_liked
     }
-    
     return render(request, 'article_detail.html', context)
 
 @login_required
@@ -191,7 +177,6 @@ def article_comment(request, article_id):
         user = request.user
         comment = request.POST['comment']
         Article_comment.objects.create(article_comment=article, user=user, comment=comment)
-
     return redirect('article_detail', article_id=article_id)
 
 def is_admin(user):
@@ -202,7 +187,6 @@ def extract_doi_from_pdf(pdf_path):
     """Извлекает DOI из PDF-файла с помощью PyMuPDF."""
     doc = None
     try:
-        # Открываем PDF-файл
         doc = fitz.open(pdf_path)
         for page in doc:
             text = page.get_text()
@@ -216,7 +200,6 @@ def extract_doi_from_pdf(pdf_path):
         logger.error(f"Ошибка извлечения DOI из {pdf_path}: {e}")
         return None
     finally:
-        # Проверяем, существует ли doc и не закрыт ли он
         if doc is not None and not doc.is_closed:
             try:
                 doc.close()
@@ -344,10 +327,9 @@ def log_categorization(filename, category, doi=None, log_file_path=None):
         writer = csv.writer(f)
         writer.writerow([filename, category, doi if doi else "N/A"])
 
-def categorize_pdf_files(temp_dir):
-    """Категоризирует PDF-файлы и перемещает их в соответствующие папки внутри выбранной папки."""
+def categorize_pdf_files(temp_dir, files):
+    """Категоризирует PDF-файлы и перемещает их в соответствующие папки."""
     logger.debug(f"Начало категоризации в папке: {temp_dir}")
-    # Список категорий
     categories = [
         "Education", "IoT", "Cybersecurity", "Cryptography",
         "Mathematics", "Sport", "Medicine", "Turkmenistan"
@@ -357,7 +339,7 @@ def categorize_pdf_files(temp_dir):
     create_category_folders(temp_dir, categories)
     logger.debug(f"Созданы папки категорий: {categories + ['Unknown']}")
     
-    # Создаём CSV-файл для лога в выбранной директории
+    # Создаём CSV-файл для лога
     log_file_path = os.path.join(temp_dir, "categorization_log.csv")
     if not os.path.exists(log_file_path):
         with open(log_file_path, "w", newline="", encoding="utf-8") as f:
@@ -365,66 +347,62 @@ def categorize_pdf_files(temp_dir):
             writer.writerow(["Filename", "Category", "DOI"])
     logger.debug(f"Создан лог-файл: {log_file_path}")
 
-    # Счётчики для результатов
     category_counts = {cat: 0 for cat in categories + ["Unknown"]}
     total_files = 0
     skipped_files = 0
-    categorize_log = []
+    categorized_files = []
 
-    # Проверяем наличие PDF-файлов
-    pdf_files = [f for f in os.listdir(temp_dir) if f.lower().endswith(".pdf")]
-    logger.debug(f"Найдено PDF-файлов: {len(pdf_files)}")
-
-    for filename in pdf_files:
+    for file in files:
         total_files += 1
-        pdf_path = os.path.join(temp_dir, filename)
-        logger.debug(f"Обработка файла: {filename}")
+        file_path = os.path.join(temp_dir, file.name)
+        with open(file_path, 'wb+') as destination:
+            for chunk in file.chunks():
+                destination.write(chunk)
 
         # Извлекаем DOI
-        doi = extract_doi_from_pdf(pdf_path)
+        doi = extract_doi_from_pdf(file_path)
         if doi:
             category = get_category_by_doi(doi)
             if category != "Unknown":
                 logger.debug(f"Категория по DOI: {category}")
             else:
-                category = get_category_by_filename(filename)
+                category = get_category_by_filename(file.name)
         else:
-            category = get_category_by_filename(filename)
-        logger.debug(f"Определена категория для {filename}: {category}")
+            category = get_category_by_filename(file.name)
+        logger.debug(f"Определена категория для {file.name}: {category}")
 
         # Логируем результат
-        log_categorization(filename, category, doi, log_file_path)
-        categorize_log.append(f"{filename}: {category}")
+        log_categorization(file.name, category, doi, log_file_path)
+        categorized_files.append((file.name, category))
 
         # Определяем целевую папку
         category_folder = os.path.join(temp_dir, category)
-        new_filepath = os.path.join(category_folder, filename)
+        new_filepath = os.path.join(category_folder, file.name)
 
         # Перемещаем файл
         try:
-            shutil.move(pdf_path, new_filepath)
+            shutil.move(file_path, new_filepath)
             category_counts[category] += 1
-            logger.debug(f"Файл перемещён: {filename} в {category}")
+            logger.debug(f"Файл перемещён: {file.name} в {category}")
         except Exception as e:
-            logger.error(f"Ошибка при перемещении {filename}: {e}")
+            logger.error(f"Ошибка при перемещении {file.name}: {e}")
             skipped_files += 1
-            categorize_log.append(f"Ошибка: {filename} ({str(e)})")
+            categorized_files.append((file.name, f"Ошибка: {str(e)}"))
 
     logger.debug(f"Завершена категоризация. Обработано: {total_files}, Пропущено: {skipped_files}")
     return {
         "total_files": total_files,
         "skipped_files": skipped_files,
         "category_counts": category_counts,
-        "categorize_log": "\n".join(categorize_log),
+        "categorized_files": categorized_files,
         "output_dir": temp_dir
     }
 
-# Вспомогательные функции для переименования
 def sanitize_filename(filename):
     """Очищает имя файла от недопустимых символов."""
     filename = re.sub(r'[<>:"/\\|?*]', '', filename)
     filename = filename.replace(' ', '_')
-    filename = filename[:100]  # Ограничиваем длину имени файла
+    filename = filename[:100]
     return filename
 
 def extract_title_from_pdf(pdf_path):
@@ -432,13 +410,11 @@ def extract_title_from_pdf(pdf_path):
     doc = None
     try:
         doc = fitz.open(pdf_path)
-        # Пробуем извлечь заголовок из метаданных
         metadata = doc.metadata
         title = metadata.get('title', '').strip()
         if title and len(title) > 5:
             return title
 
-        # Извлекаем текст с первой страницы
         page = doc[0]
         text = page.get_text("text").strip()
         if text:
@@ -448,8 +424,6 @@ def extract_title_from_pdf(pdf_path):
                 if len(line) > 10:
                     return line
 
-        # Если текст не удалось извлечь, используем OCR
-        # Преобразуем первую страницу в изображение
         pix = page.get_pixmap()
         img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
         ocr_text = pytesseract.image_to_string(img, lang="eng")
@@ -459,7 +433,6 @@ def extract_title_from_pdf(pdf_path):
                 line = line.strip()
                 if len(line) > 10:
                     return line
-
         return None
     except Exception as e:
         logger.error(f"Ошибка извлечения заголовка из {pdf_path}: {e}")
@@ -502,42 +475,36 @@ def admin_advantages(request):
                 }
                 return HttpResponseRedirect(reverse('admin_advantages'))
 
-            # Создаём временную директорию
-            temp_dir = tempfile.mkdtemp()
             try:
                 for file in files:
-                    file_path = os.path.join(temp_dir, file.name)
-                    with open(file_path, 'wb+') as destination:
-                        for chunk in file.chunks():
-                            destination.write(chunk)
+                    # Проверяем, что файл является PDF
+                    mime_type, _ = mimetypes.guess_type(file.name)
+                    if mime_type != 'application/pdf':
+                        request.session['notification'] = {
+                            'type': 'error',
+                            'message': f'Файл {file.name} не является PDF'
+                        }
+                        return HttpResponseRedirect(reverse('admin_advantages'))
 
-                    # Создаём статью
                     article = Article(
                         title=file.name,
-                        file=file_path,
+                        file=file,
                         category=category,
-                        user_name=request.user
+                        user_name=request.user.username
                     )
                     article.save()
+                    logger.debug(f"Статья сохранена: {file.name} в {article.file.path}")
 
                 request.session['notification'] = {
                     'type': 'success',
                     'message': f'Добавлено {len(files)} статей'
                 }
-
             except Exception as e:
                 logger.error(f"Ошибка при добавлении статей: {e}")
                 request.session['notification'] = {
                     'type': 'error',
                     'message': f'Ошибка при добавлении статей: {str(e)}'
                 }
-            finally:
-                try:
-                    if os.path.exists(temp_dir):
-                        shutil.rmtree(temp_dir, ignore_errors=True)
-                except Exception as e:
-                    logger.error(f"Ошибка удаления временной директории {temp_dir}: {e}")
-
             return HttpResponseRedirect(reverse('admin_advantages'))
 
         # Обработка категоризации файлов
@@ -552,46 +519,18 @@ def admin_advantages(request):
                 }
                 return HttpResponseRedirect(reverse('admin_advantages'))
 
-            # Создаём временную директорию
             temp_dir = tempfile.mkdtemp()
-            output_dir = os.path.join(temp_dir, 'categorized')
-            os.makedirs(output_dir, exist_ok=True)
-
             try:
-                categorized_files = []
-                skipped_files = 0
+                # Категоризируем файлы
+                result = categorize_pdf_files(temp_dir, files)
+                categorized_files = result['categorized_files']
+                output_dir = result['output_dir']
 
-                for file in files:
-                    file_path = os.path.join(temp_dir, file.name)
-                    with open(file_path, 'wb+') as destination:
-                        for chunk in file.chunks():
-                            destination.write(chunk)
-
-                    # Извлекаем текст из PDF для категоризации
-                    text = ""
-                    with pdfplumber.open(file_path) as pdf:
-                        for page in pdf.pages:
-                            text += page.extract_text() or ""
-
-                    # Простая категоризация на основе ключевых слов
-                    category = None
-                    for cat in categories:
-                        if cat.name.lower() in text.lower():
-                            category = cat
-                            break
-
-                    if category:
-                        category_dir = os.path.join(output_dir, category.name)
-                        os.makedirs(category_dir, exist_ok=True)
-                        new_file_path = os.path.join(category_dir, file.name)
-                        shutil.move(file_path, new_file_path)
-                        categorized_files.append((file.name, category.name))
-                    else:
-                        skipped_files += 1
-
-                # Создаём ZIP-файл с категоризированными файлами
+                # Создаем ZIP-файл в MEDIA_ROOT
                 zip_filename = f"categorized_files_{uuid.uuid4()}.zip"
-                zip_path = os.path.join(settings.TEMP_ZIP_DIR, zip_filename)
+                zip_path = os.path.join(settings.MEDIA_ROOT, 'zips', zip_filename)
+                os.makedirs(os.path.dirname(zip_path), exist_ok=True)
+
                 with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zipf:
                     for root, _, files in os.walk(output_dir):
                         for file in files:
@@ -599,18 +538,17 @@ def admin_advantages(request):
                             arcname = os.path.relpath(file_path, output_dir)
                             zipf.write(file_path, arcname)
 
-                # Логируем создание ZIP-файла
                 if os.path.exists(zip_path):
                     logger.debug(f"ZIP-файл создан: {zip_path}")
                 else:
-                    logger.error(f"ZIP-файл не был создан: {zip_path}")
+                    logger.error(f"ZIP-файл не создан: {zip_path}")
 
-                request.session['download_file'] = zip_path
+                # Сохраняем относительный путь в сессии
+                request.session['download_file'] = os.path.join('zips', zip_filename)
                 request.session['notification'] = {
                     'type': 'success',
-                    'message': f'Категоризировано {len(categorized_files)} из {len(files)} файлов'
+                    'message': f'Категоризировано {result["total_files"] - result["skipped_files"]} из {result["total_files"]} файлов'
                 }
-
             except Exception as e:
                 logger.error(f"Ошибка при категоризации файлов: {e}")
                 request.session['notification'] = {
@@ -618,12 +556,9 @@ def admin_advantages(request):
                     'message': f'Ошибка при категоризации файлов: {str(e)}'
                 }
             finally:
-                try:
-                    if os.path.exists(temp_dir):
-                        shutil.rmtree(temp_dir, ignore_errors=True)
-                except Exception as e:
-                    logger.error(f"Ошибка удаления временной директории {temp_dir}: {e}")
-
+                if os.path.exists(temp_dir):
+                    shutil.rmtree(temp_dir, ignore_errors=True)
+                    logger.debug(f"Временная директория {temp_dir} удалена")
             return HttpResponseRedirect(reverse('admin_advantages'))
 
         # Обработка переименования файлов
@@ -638,7 +573,6 @@ def admin_advantages(request):
                 }
                 return HttpResponseRedirect(reverse('admin_advantages'))
 
-            # Создаём временную директорию
             temp_dir = tempfile.mkdtemp()
             log_file_path = os.path.join(temp_dir, 'rename_log.csv')
 
@@ -649,37 +583,26 @@ def admin_advantages(request):
                     writer.writerow(['Original Name', 'New Name'])
 
                     for file in files:
+                        # Проверяем, что файл является PDF
+                        mime_type, _ = mimetypes.guess_type(file.name)
+                        if mime_type != 'application/pdf':
+                            writer.writerow([file.name, 'Не переименован: не PDF'])
+                            continue
+
                         file_path = os.path.join(temp_dir, file.name)
                         with open(file_path, 'wb+') as destination:
                             for chunk in file.chunks():
                                 destination.write(chunk)
 
-                        # Извлекаем метаданные или текст для переименования
                         new_name = file.name
                         try:
-                            with pdfplumber.open(file_path) as pdf:
-                                first_page = pdf.pages[0]
-                                text = first_page.extract_text() or ""
-                                if text:
-                                    # Простой подход: берём первые несколько слов как заголовок
-                                    words = text.split()[:5]
-                                    new_name = " ".join(words).replace('/', '_').replace('\\', '_') + '.pdf'
-
-                            # Если не удалось извлечь текст, пробуем OCR
-                            if new_name == file.name:
-                                doc = fitz.open(file_path)
-                                page = doc[0]
-                                pix = page.get_pixmap()
-                                img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
-                                text = pytesseract.image_to_string(img, lang='eng')
-                                if text:
-                                    words = text.split()[:5]
-                                    new_name = " ".join(words).replace('/', '_').replace('\\', '_') + '.pdf'
-
+                            # Пробуем извлечь заголовок
+                            title = extract_title_from_pdf(file_path)
+                            if title:
+                                new_name = sanitize_filename(title) + '.pdf'
                         except Exception as e:
-                            logger.warning(f"Не удалось переименовать файл {file.name}: {e}")
+                            logger.warning(f"Не удалось извлечь заголовок для {file.name}: {e}")
 
-                        # Переименовываем файл
                         new_file_path = os.path.join(temp_dir, new_name)
                         if new_name != file.name:
                             shutil.move(file_path, new_file_path)
@@ -690,34 +613,27 @@ def admin_advantages(request):
                             writer.writerow([file.name, 'Не переименован'])
                             logger.debug(f"Файл {file.name} не переименован")
 
-                        # Закрываем файл, если он открыт
-                        try:
-                            destination.close()
-                            logger.debug(f"Файл {file_path} закрыт")
-                        except:
-                            pass
-
-                # Создаём ZIP-файл с переименованными файлами
+                # Создаем ZIP-файл в MEDIA_ROOT
                 zip_filename = f"renamed_files_{uuid.uuid4()}.zip"
-                zip_path = os.path.join(settings.TEMP_ZIP_DIR, zip_filename)
+                zip_path = os.path.join(settings.MEDIA_ROOT, 'zips', zip_filename)
+                os.makedirs(os.path.dirname(zip_path), exist_ok=True)
+
                 with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zipf:
                     for _, new_filename in renamed_files:
                         file_path = os.path.join(temp_dir, new_filename)
                         zipf.write(file_path, new_filename)
                     zipf.write(log_file_path, "rename_log.csv")
 
-                # Логируем создание ZIP-файла
                 if os.path.exists(zip_path):
                     logger.debug(f"ZIP-файл создан: {zip_path}")
                 else:
-                    logger.error(f"ZIP-файл не был создан: {zip_path}")
+                    logger.error(f"ZIP-файл не создан: {zip_path}")
 
-                request.session['download_file'] = zip_path
+                request.session['download_file'] = os.path.join('zips', zip_filename)
                 request.session['notification'] = {
                     'type': 'success',
                     'message': f'Переименовано {len(renamed_files)} из {len(files)} файлов'
                 }
-
             except Exception as e:
                 logger.error(f"Ошибка при переименовании файлов: {e}")
                 request.session['notification'] = {
@@ -725,15 +641,11 @@ def admin_advantages(request):
                     'message': f'Ошибка при переименовании файлов: {str(e)}'
                 }
             finally:
-                try:
-                    if os.path.exists(temp_dir):
-                        shutil.rmtree(temp_dir, ignore_errors=True)
-                except Exception as e:
-                    logger.error(f"Ошибка удаления временной директории {temp_dir}: {e}")
-
+                if os.path.exists(temp_dir):
+                    shutil.rmtree(temp_dir, ignore_errors=True)
+                    logger.debug(f"Временная директория {temp_dir} удалена")
             return HttpResponseRedirect(reverse('admin_advantages'))
 
-    # Обработка GET-запроса
     notification = request.session.pop('notification', None)
     download_file = request.session.pop('download_file', None)
     logger.debug(f"Передача в шаблон: notification={notification}, download_file={download_file}")
@@ -743,6 +655,7 @@ def admin_advantages(request):
         'notification': notification,
         'download_file': download_file
     })
+
 def contact(request):
     if request.method == 'POST':
         title = request.POST['title']
@@ -750,11 +663,10 @@ def contact(request):
         user = request.user
         result = Contact.objects.create(title=title, message=message, user=user)
         if result:
-            messages.success(request, 'Habar üçin sagboluň!.')
+            messages.success(request, 'Habar üçin sagboluň!')
         else:
             messages.error(request, 'Näsazlyk ýüze çykdy.')
         return render(request, 'contact.html')
-
     return render(request, 'contact.html')
 
 def about(request):
@@ -762,14 +674,11 @@ def about(request):
 
 def profile(request):
     articles = Article.objects.filter(user_name__icontains=request.user.username)
-    
     paginator = Paginator(articles, 6)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    
     categories = ArticleCategory.objects.all()
     form = ArticleForm()
-
     context = {'categories': categories, 'form': form, 'page_obj': page_obj}
     return render(request, 'profile.html', context)
 
@@ -784,10 +693,10 @@ def add_article(request):
             return redirect('profile')
     else:
         form = ArticleForm()
-
     return render(request, 'add_article.html', {'form': form})
 
 def register(request):
+    from .forms import RegistrationForm  # Импортируем здесь, чтобы избежать циклического импорта
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
         if form.is_valid():
@@ -798,11 +707,23 @@ def register(request):
             return redirect('login')
     else:
         form = RegistrationForm()
-
     return render(request, 'register.html', {'form': form})
+
 def download_file(request):
-    file_path = request.GET.get('file')
-    if not file_path or not os.path.exists(file_path):
+    relative_file_path = request.GET.get('file')
+    if not relative_file_path:
+        logger.error("Путь к файлу не указан")
+        return HttpResponse("Файл не найден", status=404)
+
+    # Формируем полный путь, ограничивая его MEDIA_ROOT
+    file_path = os.path.join(settings.MEDIA_ROOT, relative_file_path)
+    
+    # Проверяем, что путь находится внутри MEDIA_ROOT
+    if not file_path.startswith(settings.MEDIA_ROOT):
+        logger.error(f"Попытка доступа к файлу вне MEDIA_ROOT: {file_path}")
+        return HttpResponse("Доступ запрещен", status=403)
+
+    if not os.path.exists(file_path):
         logger.error(f"Файл не найден: {file_path}")
         return HttpResponse("Файл не найден", status=404)
 
