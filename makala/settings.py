@@ -123,6 +123,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = '/account/login/'
 
 # File upload settings
-DATA_UPLOAD_MAX_NUMBER_FILES = 5000  # Увеличиваем лимит до 5000 файлов
+DATA_UPLOAD_MAX_NUMBER_FILES = 10000  # Увеличиваем лимит до 5000 файлов
 DATA_UPLOAD_MAX_MEMORY_SIZE = 52428800  # Увеличиваем лимит размера данных до 50MB (50 * 1024 * 1024)
 FILE_UPLOAD_MAX_MEMORY_SIZE = 52428800  # Увеличиваем максимальный размер файла до 50MB
